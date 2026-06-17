@@ -1,0 +1,2136 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Acompañamiento Terapéutico</title>
+  <meta name="description" content="Servicio profesional de acompañamiento terapéutico. Tu bienestar emocional es nuestra prioridad. Agendá tu consulta de forma simple y segura." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+<style>
+/* =========================================================
+   RESET & BASE
+   ========================================================= */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Outfit',sans-serif;background:#FAF8F5;color:#2D2020;line-height:1.6;min-height:100vh;-webkit-font-smoothing:antialiased}
+:root{
+  --primary:#9B7A7A;--primary-dark:#7A5858;--primary-light:#C8A8A8;--primary-xlight:#F5EDED;
+  --secondary:#7B9B87;--secondary-dark:#5C7A68;--secondary-light:#A8C4B0;
+  --accent:#D4A574;--accent-dark:#B8864E;--accent-light:#EDD5B0;
+  --bg:#FAF8F5;--bg-warm:#F5EFE8;--surface:#FFFFFF;--surface-hover:#FDF9F6;
+  --text-dark:#2D2020;--text-medium:#5C4545;--text-light:#9B8585;--text-xlight:#C4B0B0;
+  --success:#7B9B87;--success-bg:#EBF5EE;
+  --warning:#D4A574;--warning-bg:#FDF3E7;
+  --error:#C46A6A;--error-bg:#FAEBEB;
+  --info:#7A9BB5;--info-bg:#EBF3FA;
+  --border:#EBE0D8;--border-focus:#9B7A7A;
+  --shadow-sm:0 2px 8px rgba(155,120,120,.08);
+  --shadow-md:0 4px 20px rgba(155,120,120,.13);
+  --shadow-lg:0 8px 40px rgba(155,120,120,.17);
+  --shadow-xl:0 20px 60px rgba(155,120,120,.22);
+  --r-sm:8px;--r-md:12px;--r-lg:20px;--r-xl:28px;--r-full:9999px;
+  --transition:all .25s cubic-bezier(.4,0,.2,1)
+}
+h1{font-size:clamp(1.9rem,5vw,3.4rem);font-weight:700;line-height:1.2}
+h2{font-size:clamp(1.4rem,3vw,2.2rem);font-weight:600;line-height:1.3}
+h3{font-size:clamp(1.1rem,2.5vw,1.65rem);font-weight:600}
+p{color:var(--text-medium)}
+img{max-width:100%}
+
+/* =========================================================
+   LAYOUT
+   ========================================================= */
+.container{max-width:1100px;margin:0 auto;padding:0 24px}
+.view{display:none;min-height:100vh}
+.view.active{display:block}
+
+/* =========================================================
+   LOADING OVERLAY
+   ========================================================= */
+#loading-overlay{position:fixed;inset:0;background:rgba(250,248,245,.97);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9999;transition:opacity .4s ease}
+#loading-overlay.hidden{opacity:0;pointer-events:none}
+.loader-logo{font-size:1.4rem;font-weight:700;color:var(--primary);margin-bottom:24px;text-align:center}
+.loader-spinner{width:44px;height:44px;border:3px solid var(--primary-xlight);border-top-color:var(--primary);border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* =========================================================
+   TOASTS
+   ========================================================= */
+#toast-container{position:fixed;top:20px;right:20px;z-index:9998;display:flex;flex-direction:column;gap:10px;max-width:360px}
+.toast{display:flex;align-items:flex-start;gap:12px;padding:14px 18px;border-radius:var(--r-md);background:var(--surface);box-shadow:var(--shadow-lg);border-left:4px solid;animation:slideInR .3s ease;cursor:pointer}
+.toast.success{border-color:var(--success)}.toast.error{border-color:var(--error)}.toast.warning{border-color:var(--warning)}.toast.info{border-color:var(--info)}
+.toast-icon{font-size:1.1rem;flex-shrink:0;margin-top:2px}
+.toast-body{flex:1}
+.toast-title{font-weight:700;font-size:.88rem;color:var(--text-dark)}
+.toast-msg{font-size:.82rem;color:var(--text-medium);margin-top:2px}
+@keyframes slideInR{from{transform:translateX(110%);opacity:0}to{transform:translateX(0);opacity:1}}
+
+/* =========================================================
+   MODALS
+   ========================================================= */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(45,32,32,.52);backdrop-filter:blur(5px);z-index:9000;align-items:center;justify-content:center;padding:20px}
+.modal-overlay.active{display:flex}
+.modal{background:var(--surface);border-radius:var(--r-xl);padding:36px;max-width:520px;width:100%;max-height:90vh;overflow-y:auto;animation:modalIn .3s ease;box-shadow:var(--shadow-xl)}
+.modal-sm{max-width:400px}.modal-lg{max-width:680px}
+@keyframes modalIn{from{transform:scale(.92) translateY(20px);opacity:0}to{transform:scale(1) translateY(0);opacity:1}}
+.modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px}
+.modal-title{font-size:1.2rem;font-weight:700;color:var(--text-dark)}
+.modal-close{width:34px;height:34px;border-radius:50%;border:none;background:var(--bg-warm);color:var(--text-medium);cursor:pointer;font-size:1.1rem;display:flex;align-items:center;justify-content:center;transition:var(--transition)}
+.modal-close:hover{background:var(--primary-xlight);color:var(--primary-dark)}
+
+/* =========================================================
+   BUTTONS
+   ========================================================= */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:12px 28px;border-radius:var(--r-full);border:none;font-family:'Outfit',sans-serif;font-size:.95rem;font-weight:600;cursor:pointer;transition:var(--transition);text-decoration:none;white-space:nowrap;position:relative}
+.btn:disabled{opacity:.6;cursor:not-allowed}
+.btn-primary{background:var(--primary);color:white;box-shadow:0 4px 15px rgba(155,120,120,.28)}
+.btn-primary:hover:not(:disabled){background:var(--primary-dark);box-shadow:0 6px 20px rgba(155,120,120,.38);transform:translateY(-1px)}
+.btn-secondary{background:var(--secondary);color:white;box-shadow:0 4px 15px rgba(123,155,135,.28)}
+.btn-secondary:hover:not(:disabled){background:var(--secondary-dark);transform:translateY(-1px)}
+.btn-accent{background:var(--accent);color:white;box-shadow:0 4px 15px rgba(212,165,116,.28)}
+.btn-accent:hover:not(:disabled){background:var(--accent-dark);transform:translateY(-1px)}
+.btn-outline{background:transparent;color:var(--primary);border:2px solid var(--primary)}
+.btn-outline:hover:not(:disabled){background:var(--primary-xlight)}
+.btn-ghost{background:transparent;color:var(--text-medium);border:2px solid var(--border)}
+.btn-ghost:hover:not(:disabled){background:var(--bg-warm);border-color:var(--primary-light);color:var(--primary)}
+.btn-danger{background:var(--error);color:white}
+.btn-danger:hover:not(:disabled){background:#A85555;transform:translateY(-1px)}
+.btn-sm{padding:8px 18px;font-size:.84rem}.btn-xs{padding:5px 12px;font-size:.78rem}
+.btn-lg{padding:15px 38px;font-size:1.02rem}
+.btn-full{width:100%}
+.btn.loading{color:transparent !important;pointer-events:none}
+.btn.loading::after{content:'';position:absolute;width:16px;height:16px;border:2px solid rgba(255,255,255,.4);border-top-color:white;border-radius:50%;animation:spin .7s linear infinite}
+
+/* =========================================================
+   FORMS
+   ========================================================= */
+.form-group{margin-bottom:18px}
+.form-label{display:block;font-size:.88rem;font-weight:600;color:var(--text-medium);margin-bottom:7px}
+.form-label .req{color:var(--error);margin-left:2px}
+.form-input,.form-select,.form-textarea{width:100%;padding:11px 15px;border:2px solid var(--border);border-radius:var(--r-md);font-family:'Outfit',sans-serif;font-size:.94rem;color:var(--text-dark);background:var(--surface);transition:var(--transition);outline:none}
+.form-input:focus,.form-select:focus,.form-textarea:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(155,120,120,.1)}
+.form-input::placeholder,.form-textarea::placeholder{color:var(--text-xlight)}
+.form-textarea{resize:vertical;min-height:95px}
+.form-select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%239B8585' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 13px center;background-size:17px;padding-right:42px}
+.form-error{display:none;font-size:.8rem;color:var(--error);margin-top:5px}
+.form-error.show{display:block}
+.form-hint{font-size:.8rem;color:var(--text-light);margin-top:5px}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.input-wrapper{position:relative}
+.input-wrapper .form-input{padding-right:46px}
+.toggle-pw{position:absolute;right:13px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--text-light);font-size:.95rem;padding:4px;transition:var(--transition)}
+.toggle-pw:hover{color:var(--primary)}
+
+/* =========================================================
+   BADGES
+   ========================================================= */
+.badge{display:inline-flex;align-items:center;gap:4px;padding:4px 11px;border-radius:var(--r-full);font-size:.76rem;font-weight:700}
+.badge-pending{background:var(--warning-bg);color:var(--accent-dark)}
+.badge-confirmed{background:var(--success-bg);color:var(--secondary-dark)}
+.badge-cancelled{background:var(--error-bg);color:var(--error)}
+.badge-paid{background:var(--success-bg);color:var(--secondary-dark)}
+.badge-unpaid{background:var(--warning-bg);color:var(--accent-dark)}
+.badge-active{background:var(--success-bg);color:var(--secondary-dark)}
+.badge-inactive{background:#F0F0F0;color:#999}
+
+/* =========================================================
+   TOGGLE SWITCH
+   ========================================================= */
+.toggle-sw{position:relative;display:inline-block;width:42px;height:22px}
+.toggle-sw input{display:none}
+.slider{position:absolute;inset:0;background:var(--border);border-radius:var(--r-full);cursor:pointer;transition:var(--transition)}
+.slider::before{content:'';position:absolute;width:16px;height:16px;left:3px;top:3px;background:white;border-radius:50%;transition:var(--transition);box-shadow:0 2px 4px rgba(0,0,0,.2)}
+.toggle-sw input:checked+.slider{background:var(--secondary)}
+.toggle-sw input:checked+.slider::before{transform:translateX(20px)}
+
+/* =========================================================
+   SECTION HEADER
+   ========================================================= */
+.section-header{text-align:center;margin-bottom:48px}
+.section-label{display:inline-block;font-size:.78rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--primary);background:var(--primary-xlight);padding:6px 16px;border-radius:var(--r-full);margin-bottom:14px}
+.section-title{color:var(--text-dark);margin-bottom:14px}
+.section-subtitle{font-size:1.03rem;color:var(--text-medium);max-width:560px;margin:0 auto}
+
+/* =========================================================
+   LANDING — NAVBAR
+   ========================================================= */
+.navbar{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(250,248,245,.95);backdrop-filter:blur(18px);border-bottom:1px solid rgba(235,224,216,.6);transition:var(--transition)}
+.navbar-inner{display:flex;align-items:center;justify-content:space-between;height:70px;padding:0 32px;max-width:1200px;margin:0 auto}
+.nav-logo{display:flex;align-items:center;gap:10px;cursor:pointer;text-decoration:none}
+.nav-logo-icon{width:36px;height:36px;background:linear-gradient(135deg,var(--primary),var(--accent));border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.15rem}
+.nav-logo-text{font-size:.95rem;font-weight:700;color:var(--text-dark);line-height:1.2}
+.nav-logo-sub{font-size:.68rem;color:var(--text-light);font-weight:400}
+.nav-actions{display:flex;align-items:center;gap:10px}
+.nav-user{display:flex;align-items:center;gap:9px;font-size:.88rem;color:var(--text-medium)}
+.avatar{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--accent));color:white;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.85rem;flex-shrink:0}
+
+/* =========================================================
+   LANDING — HERO
+   ========================================================= */
+.hero{min-height:100vh;display:flex;align-items:center;padding:100px 0 80px;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;top:-20%;right:-10%;width:580px;height:580px;background:radial-gradient(circle,rgba(155,120,120,.07) 0%,transparent 70%);border-radius:50%}
+.hero::after{content:'';position:absolute;bottom:-10%;left:-5%;width:400px;height:400px;background:radial-gradient(circle,rgba(123,155,135,.07) 0%,transparent 70%);border-radius:50%}
+.hero-grid{display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:center;position:relative;z-index:1}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;background:var(--primary-xlight);color:var(--primary-dark);padding:7px 17px;border-radius:var(--r-full);font-size:.83rem;font-weight:600;margin-bottom:22px}
+.hero-dot{width:8px;height:8px;background:var(--secondary);border-radius:50%;animation:pulse-dot 2.2s ease infinite}
+@keyframes pulse-dot{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.35);opacity:.65}}
+.hero-title{color:var(--text-dark);margin-bottom:18px}
+.hero-title em{color:var(--primary);font-style:normal}
+.hero-desc{font-size:1.05rem;color:var(--text-medium);margin-bottom:32px;line-height:1.75}
+.hero-cta{display:flex;gap:14px;flex-wrap:wrap}
+.hero-stats{display:flex;gap:28px;margin-top:44px;padding-top:32px;border-top:1px solid var(--border)}
+.stat-val{font-size:1.7rem;font-weight:800;color:var(--text-dark)}
+.stat-lbl{font-size:.8rem;color:var(--text-light)}
+.hero-visual{position:relative}
+.hero-card{background:var(--surface);border-radius:var(--r-xl);padding:34px;box-shadow:var(--shadow-xl);border:1px solid var(--border)}
+.hero-card-emoji{font-size:4.5rem;text-align:center;margin-bottom:18px}
+.hero-card-title{font-weight:700;color:var(--text-dark);text-align:center;margin-bottom:6px}
+.hero-card-sub{font-size:.84rem;color:var(--text-medium);text-align:center}
+.float-card{position:absolute;background:var(--surface);border-radius:var(--r-lg);padding:13px 17px;box-shadow:var(--shadow-md);border:1px solid var(--border);display:flex;align-items:center;gap:10px;font-size:.83rem}
+.float-1{top:-18px;right:-18px;animation:fl1 4s ease-in-out infinite}
+.float-2{bottom:-18px;left:-18px;animation:fl2 4s ease-in-out infinite 1.2s}
+@keyframes fl1{0%,100%{transform:translateY(0)}50%{transform:translateY(-9px)}}
+@keyframes fl2{0%,100%{transform:translateY(0)}50%{transform:translateY(9px)}}
+.float-card-name{font-weight:700;color:var(--text-dark)}
+.float-card-sub{color:var(--text-light)}
+
+/* =========================================================
+   LANDING — HOW IT WORKS
+   ========================================================= */
+.hiw{padding:96px 0;background:var(--bg-warm)}
+.steps-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:28px}
+.step-card{text-align:center;padding:38px 26px;background:var(--surface);border-radius:var(--r-xl);border:1px solid var(--border);box-shadow:var(--shadow-sm);transition:var(--transition)}
+.step-card:hover{box-shadow:var(--shadow-md);transform:translateY(-4px)}
+.step-num{display:inline-flex;align-items:center;justify-content:center;width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--accent));color:white;font-size:1.2rem;font-weight:800;margin-bottom:18px;box-shadow:0 8px 20px rgba(155,120,120,.28)}
+.step-icon{font-size:2.4rem;margin-bottom:14px}
+.step-title{font-size:1.1rem;color:var(--text-dark);margin-bottom:10px;font-weight:600}
+.step-desc{font-size:.88rem;color:var(--text-medium);line-height:1.65}
+
+/* =========================================================
+   LANDING — PLANS
+   ========================================================= */
+.plans-section{padding:96px 0}
+.plans-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:26px}
+.plan-card{background:var(--surface);border-radius:var(--r-xl);padding:34px;border:2px solid var(--border);transition:var(--transition);position:relative;overflow:hidden}
+.plan-card::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,var(--primary),var(--accent))}
+.plan-card:hover{border-color:var(--primary-light);box-shadow:var(--shadow-lg);transform:translateY(-4px)}
+.plan-name{font-size:1.2rem;font-weight:700;color:var(--text-dark);margin-bottom:6px}
+.plan-price{font-size:2.1rem;font-weight:800;color:var(--primary);margin-bottom:14px;line-height:1}
+.plan-currency{font-size:.95rem;vertical-align:super;font-weight:600}
+.plan-desc{font-size:.88rem;color:var(--text-medium);line-height:1.65;margin-bottom:26px}
+.plans-empty{text-align:center;padding:56px;color:var(--text-light);grid-column:1/-1}
+
+/* =========================================================
+   LANDING — CTA
+   ========================================================= */
+.cta-sec{padding:96px 0;background:linear-gradient(135deg,var(--primary-dark) 0%,var(--primary) 100%);position:relative;overflow:hidden}
+.cta-sec::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 70% 50%,rgba(212,165,116,.28) 0%,transparent 60%)}
+.cta-inner{text-align:center;position:relative;z-index:1}
+.cta-inner h2{color:white;margin-bottom:14px}
+.cta-inner p{color:rgba(255,255,255,.82);font-size:1.05rem;margin-bottom:32px}
+
+/* =========================================================
+   LANDING — FOOTER
+   ========================================================= */
+.footer{background:var(--text-dark);color:rgba(255,255,255,.45);padding:56px 0 28px}
+.footer-grid{display:grid;grid-template-columns:1.6fr 1fr 1fr;gap:44px;margin-bottom:44px}
+.footer-brand{font-size:1.05rem;font-weight:700;color:white;margin-bottom:10px}
+.footer-bdesc{font-size:.86rem;line-height:1.7}
+.footer-h{font-weight:700;color:white;margin-bottom:14px}
+.footer-links{list-style:none;display:flex;flex-direction:column;gap:9px}
+.footer-links a{color:rgba(255,255,255,.45);text-decoration:none;font-size:.86rem;transition:var(--transition);cursor:pointer}
+.footer-links a:hover{color:var(--primary-light)}
+.footer-bottom{border-top:1px solid rgba(255,255,255,.1);padding-top:26px;text-align:center;font-size:.8rem}
+
+/* =========================================================
+   AUTH VIEW
+   ========================================================= */
+.auth-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;background:linear-gradient(135deg,var(--bg) 0%,var(--bg-warm) 100%)}
+.auth-card{background:var(--surface);border-radius:var(--r-xl);padding:44px;width:100%;max-width:450px;box-shadow:var(--shadow-xl);border:1px solid var(--border)}
+.auth-back{display:flex;align-items:center;gap:7px;font-size:.86rem;color:var(--text-medium);cursor:pointer;margin-bottom:22px;transition:var(--transition)}
+.auth-back:hover{color:var(--primary)}
+.auth-logo-wrap{text-align:center;margin-bottom:32px}
+.auth-logo-icon{width:60px;height:60px;background:linear-gradient(135deg,var(--primary),var(--accent));border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:1.9rem;margin:0 auto 14px;box-shadow:0 8px 24px rgba(155,120,120,.28)}
+.auth-logo-title{font-size:1.05rem;font-weight:700;color:var(--text-dark)}
+.auth-tabs{display:flex;background:var(--bg-warm);border-radius:var(--r-full);padding:4px;margin-bottom:28px}
+.auth-tab{flex:1;padding:9px;border:none;background:transparent;border-radius:var(--r-full);font-family:'Outfit',sans-serif;font-size:.9rem;font-weight:600;color:var(--text-light);cursor:pointer;transition:var(--transition)}
+.auth-tab.active{background:var(--surface);color:var(--primary);box-shadow:var(--shadow-sm)}
+.auth-form{display:none}.auth-form.active{display:block}
+.auth-switch{text-align:center;margin-top:18px;font-size:.86rem;color:var(--text-medium)}
+.auth-switch a{color:var(--primary);font-weight:600;cursor:pointer;text-decoration:none}
+
+/* =========================================================
+   APP HEADER (dashboard/booking)
+   ========================================================= */
+.app-header{background:var(--surface);border-bottom:1px solid var(--border);padding:0 28px;height:68px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:var(--shadow-sm)}
+.app-logo{display:flex;align-items:center;gap:9px}
+.app-logo-icon{width:34px;height:34px;background:linear-gradient(135deg,var(--primary),var(--accent));border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:1.1rem}
+.app-logo-title{font-size:.9rem;font-weight:700;color:var(--text-dark)}
+.app-logo-sub{font-size:.68rem;color:var(--text-light)}
+.app-header-r{display:flex;align-items:center;gap:14px}
+.app-main{flex:1;padding:44px 28px;max-width:1100px;width:100%;margin:0 auto}
+
+/* =========================================================
+   DASHBOARD
+   ========================================================= */
+.dash-welcome{margin-bottom:36px}
+.dash-title{font-size:1.7rem;font-weight:700;color:var(--text-dark);margin-bottom:6px}
+.dash-sub{color:var(--text-medium);font-size:.98rem}
+.dash-bar{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px}
+.dash-bar-title{font-size:1.1rem;font-weight:700;color:var(--text-dark)}
+.appt-card{background:var(--surface);border-radius:var(--r-lg);padding:22px;border:1px solid var(--border);transition:var(--transition);margin-bottom:14px}
+.appt-card:hover{border-color:var(--primary-light);box-shadow:var(--shadow-md)}
+.appt-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px;flex-wrap:wrap;gap:8px}
+.appt-code{font-family:monospace;font-size:.78rem;background:var(--bg-warm);color:var(--text-medium);padding:3px 9px;border-radius:var(--r-sm);border:1px solid var(--border)}
+.appt-badges{display:flex;gap:7px;flex-wrap:wrap}
+.appt-plan{font-size:1.02rem;font-weight:700;color:var(--text-dark);margin-bottom:6px}
+.appt-dt{display:flex;align-items:center;gap:7px;font-size:.88rem;color:var(--text-medium)}
+.appt-foot{display:flex;justify-content:space-between;align-items:center;margin-top:14px;padding-top:14px;border-top:1px solid var(--border);flex-wrap:wrap;gap:8px}
+.appt-price{font-size:1.1rem;font-weight:700;color:var(--primary)}
+.appt-created{font-size:.78rem;color:var(--text-xlight)}
+.notice-banner{background:linear-gradient(135deg,var(--accent-light),#FBF3E5);border:1px solid var(--accent-light);border-left:4px solid var(--accent);border-radius:var(--r-md);padding:14px 18px;margin-top:14px;display:flex;align-items:flex-start;gap:11px}
+.notice-icon{font-size:1.2rem;flex-shrink:0;margin-top:2px}
+.notice-text{font-size:.86rem;color:var(--text-medium);line-height:1.55}
+.notice-text strong{color:var(--text-dark)}
+.wa-mini{display:inline-flex;align-items:center;gap:6px;background:#25D366;color:white;border:none;border-radius:var(--r-full);padding:6px 15px;margin-top:8px;font-family:'Outfit',sans-serif;font-size:.82rem;font-weight:700;cursor:pointer;text-decoration:none;transition:var(--transition)}
+.wa-mini:hover{background:#128C7E}
+.empty-state{text-align:center;padding:72px 24px}
+.empty-icon{font-size:3.8rem;margin-bottom:18px;opacity:.45}
+.empty-title{font-size:1.25rem;font-weight:600;color:var(--text-dark);margin-bottom:10px}
+.empty-desc{color:var(--text-medium);margin-bottom:26px}
+
+/* =========================================================
+   BOOKING FLOW
+   ========================================================= */
+.booking-header{background:var(--surface);border-bottom:1px solid var(--border);padding:18px 28px;display:flex;align-items:center;gap:18px;box-shadow:var(--shadow-sm)}
+.booking-title{font-size:1.05rem;font-weight:700;color:var(--text-dark)}
+.booking-progress{padding:20px 28px;background:var(--surface);border-bottom:1px solid var(--border)}
+.prog-steps{display:flex;align-items:center;max-width:580px;margin:0 auto}
+.prog-step{display:flex;flex-direction:column;align-items:center;position:relative;flex:1}
+.prog-circle{width:34px;height:34px;border-radius:50%;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:.82rem;font-weight:700;color:var(--text-light);background:var(--surface);transition:var(--transition);position:relative;z-index:1}
+.prog-step.active .prog-circle{border-color:var(--primary);background:var(--primary);color:white;box-shadow:0 4px 12px rgba(155,120,120,.3)}
+.prog-step.done .prog-circle{border-color:var(--secondary);background:var(--secondary);color:white}
+.prog-label{font-size:.7rem;color:var(--text-light);margin-top:7px;text-align:center;font-weight:500}
+.prog-step.active .prog-label,.prog-step.done .prog-label{color:var(--text-medium)}
+.prog-connector{flex:1;height:2px;background:var(--border);margin:0 3px;margin-bottom:26px;transition:var(--transition)}
+.prog-connector.done{background:var(--secondary)}
+.booking-body{max-width:700px;margin:0 auto;padding:36px 22px}
+.booking-step{display:none}
+.booking-step.active{display:block;animation:fadeUp .3s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+.bstep-title{font-size:1.35rem;font-weight:700;color:var(--text-dark);margin-bottom:7px}
+.bstep-desc{color:var(--text-medium);margin-bottom:28px}
+.bplans-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px;margin-bottom:28px}
+.bplan-card{border:2px solid var(--border);border-radius:var(--r-lg);padding:22px;cursor:pointer;transition:var(--transition);position:relative}
+.bplan-card:hover{border-color:var(--primary-light);box-shadow:var(--shadow-md)}
+.bplan-card.selected{border-color:var(--primary);background:var(--primary-xlight);box-shadow:0 0 0 4px rgba(155,120,120,.1)}
+.bplan-check{position:absolute;top:13px;right:13px;width:22px;height:22px;border-radius:50%;background:var(--primary);color:white;display:none;align-items:center;justify-content:center;font-size:.75rem}
+.bplan-card.selected .bplan-check{display:flex}
+.bplan-name{font-weight:700;color:var(--text-dark);margin-bottom:5px}
+.bplan-price{font-size:1.45rem;font-weight:800;color:var(--primary);margin-bottom:7px}
+.bplan-desc{font-size:.82rem;color:var(--text-medium);line-height:1.5}
+.slots-group{margin-bottom:22px}
+.slots-date-lbl{font-size:.97rem;font-weight:700;color:var(--text-dark);margin-bottom:10px;display:flex;align-items:center;gap:7px}
+.slots-row{display:flex;flex-wrap:wrap;gap:9px}
+.slot-btn{padding:9px 17px;border:2px solid var(--border);border-radius:var(--r-full);font-family:'Outfit',sans-serif;font-size:.88rem;font-weight:600;cursor:pointer;background:var(--surface);color:var(--text-medium);transition:var(--transition)}
+.slot-btn:hover{border-color:var(--primary-light);color:var(--primary)}
+.slot-btn.selected{border-color:var(--primary);background:var(--primary);color:white;box-shadow:0 4px 12px rgba(155,120,120,.28)}
+.booking-nav{display:flex;justify-content:space-between;align-items:center;margin-top:36px;padding-top:22px;border-top:1px solid var(--border)}
+.review-card{background:var(--bg-warm);border-radius:var(--r-lg);padding:22px;border:1px solid var(--border);margin-bottom:22px}
+.review-row{display:flex;justify-content:space-between;align-items:flex-start;padding:9px 0;border-bottom:1px solid var(--border)}
+.review-row:last-child{border-bottom:none}
+.review-lbl{font-size:.83rem;color:var(--text-light);font-weight:500}
+.review-val{font-size:.92rem;color:var(--text-dark);font-weight:600;text-align:right;max-width:220px}
+
+/* =========================================================
+   CONFIRMATION
+   ========================================================= */
+.conf-wrap{min-height:100vh;background:var(--bg);display:flex;align-items:center;justify-content:center;padding:24px}
+.conf-card{background:var(--surface);border-radius:var(--r-xl);padding:52px 44px;max-width:500px;width:100%;text-align:center;box-shadow:var(--shadow-xl);border:1px solid var(--border)}
+.conf-icon{width:76px;height:76px;background:var(--success-bg);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:2.4rem;margin:0 auto 26px;animation:bounceIn .5s cubic-bezier(.68,-.55,.265,1.55)}
+@keyframes bounceIn{0%{transform:scale(0)}80%{transform:scale(1.1)}100%{transform:scale(1)}}
+.conf-title{font-size:1.75rem;font-weight:800;color:var(--text-dark);margin-bottom:10px}
+.conf-desc{color:var(--text-medium);margin-bottom:32px;line-height:1.7}
+.code-box{background:var(--bg-warm);border:2px dashed var(--primary-light);border-radius:var(--r-lg);padding:22px;margin-bottom:26px}
+.code-label{font-size:.78rem;text-transform:uppercase;letter-spacing:.1em;color:var(--text-light);margin-bottom:9px;font-weight:700}
+.code-value{font-family:monospace;font-size:1.9rem;font-weight:800;color:var(--primary-dark);letter-spacing:.1em}
+.code-hint{font-size:.8rem;color:var(--text-light);margin-top:7px}
+.wa-btn{display:inline-flex;align-items:center;justify-content:center;gap:9px;background:#25D366;color:white;border:none;border-radius:var(--r-full);padding:14px 32px;font-family:'Outfit',sans-serif;font-size:.98rem;font-weight:700;cursor:pointer;text-decoration:none;width:100%;transition:var(--transition);box-shadow:0 8px 24px rgba(37,211,102,.28)}
+.wa-btn:hover{background:#128C7E;box-shadow:0 12px 28px rgba(37,211,102,.38);transform:translateY(-2px)}
+
+/* =========================================================
+   ADMIN LAYOUT
+   ========================================================= */
+.admin-layout{display:flex;min-height:100vh}
+.admin-sidebar{width:252px;background:var(--text-dark);flex-shrink:0;display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:200;overflow-y:auto;transition:transform .3s ease}
+.admin-sb-head{padding:26px 22px;border-bottom:1px solid rgba(255,255,255,.1)}
+.admin-sb-logo{display:flex;align-items:center;gap:9px;margin-bottom:5px}
+.admin-sb-logo-icon{width:34px;height:34px;background:linear-gradient(135deg,var(--primary),var(--accent));border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:1.05rem;flex-shrink:0}
+.admin-sb-logo-text{font-size:.88rem;font-weight:700;color:white}
+.admin-badge{display:inline-block;background:var(--primary);color:white;font-size:.66rem;font-weight:700;padding:2px 8px;border-radius:var(--r-full);margin-top:4px}
+.admin-nav{padding:14px 10px;flex:1}
+.admin-nav-sec{font-size:.68rem;text-transform:uppercase;letter-spacing:.08em;color:rgba(255,255,255,.3);font-weight:700;padding:12px 12px 7px}
+.admin-nav-item{display:flex;align-items:center;gap:11px;padding:11px 14px;border-radius:var(--r-md);cursor:pointer;transition:var(--transition);font-size:.9rem;color:rgba(255,255,255,.58);font-weight:500;margin-bottom:2px}
+.admin-nav-item:hover{background:rgba(255,255,255,.08);color:white}
+.admin-nav-item.active{background:var(--primary);color:white;box-shadow:0 4px 12px rgba(155,120,120,.28)}
+.admin-nav-icon{font-size:1.05rem;flex-shrink:0}
+.admin-sb-foot{padding:14px 10px;border-top:1px solid rgba(255,255,255,.1)}
+.admin-content{flex:1;margin-left:252px;display:flex;flex-direction:column;min-height:100vh}
+.admin-topbar{background:var(--surface);border-bottom:1px solid var(--border);padding:0 28px;height:68px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:var(--shadow-sm)}
+.admin-page-title{font-size:1.15rem;font-weight:700;color:var(--text-dark)}
+.admin-main{padding:32px;flex:1}
+.admin-subview{display:none}
+.admin-subview.active{display:block;animation:fadeUp .3s ease}
+
+/* Admin stats */
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-bottom:32px}
+.stat-card{background:var(--surface);border-radius:var(--r-lg);padding:22px;border:1px solid var(--border)}
+.stat-lbl{font-size:.8rem;color:var(--text-light);font-weight:500;margin-bottom:7px}
+.stat-val{font-size:1.9rem;font-weight:800;color:var(--text-dark)}
+.stat-sub{font-size:.76rem;color:var(--text-xlight);margin-top:3px}
+
+/* Filters */
+.filters-bar{display:flex;gap:10px;align-items:center;margin-bottom:22px;flex-wrap:wrap}
+.filter-btn{padding:7px 16px;border-radius:var(--r-full);border:2px solid var(--border);background:var(--surface);font-family:'Outfit',sans-serif;font-size:.83rem;font-weight:600;cursor:pointer;color:var(--text-medium);transition:var(--transition)}
+.filter-btn.active{border-color:var(--primary);background:var(--primary);color:white}
+.filter-btn:hover:not(.active){border-color:var(--primary-light);color:var(--primary)}
+.search-box{display:flex;align-items:center;background:var(--surface);border:2px solid var(--border);border-radius:var(--r-full);padding:7px 16px;gap:9px;flex:1;max-width:300px}
+.search-box input{border:none;outline:none;font-family:'Outfit',sans-serif;font-size:.88rem;color:var(--text-dark);background:transparent;width:100%}
+.search-icon{color:var(--text-light)}
+
+/* Admin appointment cards */
+.acard{background:var(--surface);border-radius:var(--r-lg);border:1px solid var(--border);margin-bottom:14px;overflow:hidden;transition:var(--transition)}
+.acard:hover{border-color:var(--primary-light);box-shadow:var(--shadow-sm)}
+.acard-head{display:flex;justify-content:space-between;align-items:center;padding:18px 22px;cursor:pointer}
+.acard-head:hover{background:var(--surface-hover)}
+.acard-left{display:flex;align-items:center;gap:14px}
+.acard-avatar{width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,var(--primary-light),var(--accent-light));display:flex;align-items:center;justify-content:center;font-weight:700;font-size:1rem;color:var(--primary-dark);flex-shrink:0}
+.acard-name{font-weight:700;color:var(--text-dark);margin-bottom:3px}
+.acard-meta{font-size:.8rem;color:var(--text-light)}
+.acard-right{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.acard-body{display:none;padding:0 22px 22px;border-top:1px solid var(--border)}
+.acard-body.open{display:block;animation:fadeUp .2s ease}
+.acard-details{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:18px 0}
+.detail-lbl{font-size:.76rem;color:var(--text-light);font-weight:600;text-transform:uppercase;letter-spacing:.04em;margin-bottom:3px}
+.detail-val{font-size:.92rem;color:var(--text-dark);font-weight:600}
+.acard-actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:18px;padding-top:18px;border-top:1px solid var(--border)}
+.hist-item{display:flex;gap:11px;padding:10px 0;border-bottom:1px solid var(--border)}
+.hist-item:last-child{border-bottom:none}
+.hist-dot{width:9px;height:9px;border-radius:50%;background:var(--primary-light);margin-top:5px;flex-shrink:0}
+.hist-text{font-size:.86rem;color:var(--text-medium)}
+.hist-time{font-size:.76rem;color:var(--text-xlight)}
+
+/* Admin plans */
+.plan-admin-card{background:var(--surface);border-radius:var(--r-lg);padding:22px;border:1px solid var(--border);display:flex;align-items:center;gap:18px;margin-bottom:11px;transition:var(--transition)}
+.plan-admin-card:hover{border-color:var(--primary-light);box-shadow:var(--shadow-sm)}
+.plan-order-btns{display:flex;flex-direction:column;gap:3px}
+.order-btn{width:26px;height:22px;border:1px solid var(--border);border-radius:4px;background:var(--bg-warm);cursor:pointer;font-size:.72rem;display:flex;align-items:center;justify-content:center;transition:var(--transition);color:var(--text-medium)}
+.order-btn:hover:not(:disabled){background:var(--primary-xlight);border-color:var(--primary-light);color:var(--primary)}
+.order-btn:disabled{opacity:.4;cursor:not-allowed}
+.plan-admin-info{flex:1}
+.plan-admin-name{font-weight:700;color:var(--text-dark);margin-bottom:3px}
+.plan-admin-price{font-size:1.15rem;font-weight:800;color:var(--primary);margin-bottom:5px}
+.plan-admin-desc{font-size:.82rem;color:var(--text-medium)}
+.plan-admin-actions{display:flex;align-items:center;gap:9px}
+
+/* Admin slots */
+.slot-item{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;background:var(--surface);border-radius:var(--r-md);border:1px solid var(--border);margin-bottom:9px;transition:var(--transition)}
+.slot-item:hover{border-color:var(--primary-light)}
+.slot-info{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.slot-date{font-weight:700;color:var(--text-dark)}
+.slot-time{background:var(--primary-xlight);color:var(--primary-dark);padding:4px 11px;border-radius:var(--r-full);font-size:.83rem;font-weight:700}
+.slot-actions{display:flex;gap:7px}
+
+/* Reschedule */
+.reschedule-slots{max-height:280px;overflow-y:auto;border:1px solid var(--border);border-radius:var(--r-md)}
+.rslot-item{display:flex;align-items:center;justify-content:space-between;padding:11px 15px;border-bottom:1px solid var(--border);cursor:pointer;transition:var(--transition)}
+.rslot-item:last-child{border-bottom:none}
+.rslot-item:hover{background:var(--primary-xlight)}
+.rslot-item.selected{background:var(--primary);color:white}
+.rslot-item.selected .rslot-sub{color:rgba(255,255,255,.75)}
+.rslot-name{font-weight:600;font-size:.9rem}
+.rslot-sub{font-size:.8rem;color:var(--text-medium)}
+
+/* Mobile admin */
+.admin-mobile-toggle{display:none;position:fixed;bottom:22px;left:22px;z-index:300;width:50px;height:50px;border-radius:50%;background:var(--primary);color:white;border:none;font-size:1.25rem;cursor:pointer;box-shadow:var(--shadow-lg);align-items:center;justify-content:center}
+.sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:199}
+.sidebar-overlay.active{display:block}
+
+/* Confirm dialog */
+.confirm-dlg{text-align:center}
+.confirm-icon-big{font-size:2.8rem;margin-bottom:14px}
+.confirm-dlg-title{font-size:1.15rem;font-weight:700;color:var(--text-dark);margin-bottom:7px}
+.confirm-dlg-desc{color:var(--text-medium);margin-bottom:26px}
+.confirm-actions{display:flex;gap:11px;justify-content:center}
+
+/* Divider */
+.divider{height:1px;background:var(--border);margin:22px 0}
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+@media(max-width:1100px){
+  .stats-grid{grid-template-columns:repeat(2,1fr)}
+  .acard-details{grid-template-columns:repeat(2,1fr)}
+  .hero-grid{grid-template-columns:1fr;gap:36px}
+  .hero-visual{display:none}
+  .steps-grid{grid-template-columns:repeat(2,1fr)}
+  .footer-grid{grid-template-columns:1fr 1fr}
+}
+@media(max-width:768px){
+  .admin-sidebar{transform:translateX(-100%)}
+  .admin-sidebar.open{transform:translateX(0)}
+  .admin-content{margin-left:0}
+  .admin-mobile-toggle{display:flex}
+  .admin-main{padding:18px 14px}
+  .admin-topbar{padding:0 14px}
+  .stats-grid{grid-template-columns:repeat(2,1fr);gap:11px}
+  .acard-details{grid-template-columns:1fr}
+  .steps-grid{grid-template-columns:1fr}
+  .hero-stats{flex-wrap:wrap;gap:18px}
+  .navbar-inner{padding:0 14px}
+  .app-main{padding:22px 14px}
+  .booking-body{padding:22px 14px}
+  .booking-header{padding:14px}
+  .auth-card{padding:28px 20px}
+  .conf-card{padding:36px 22px}
+  .modal{padding:22px}
+  .footer-grid{grid-template-columns:1fr}
+  .plans-grid{grid-template-columns:1fr}
+  .hero-cta{flex-direction:column}
+  .bplans-grid{grid-template-columns:1fr}
+  .form-row{grid-template-columns:1fr}
+}
+@media(max-width:480px){
+  .prog-label{display:none}
+  .acard-actions{flex-direction:column}
+  .filters-bar{flex-direction:column;align-items:stretch}
+  .search-box{max-width:100%}
+  #toast-container{right:10px;left:10px;max-width:none;top:12px}
+  .conf-card{padding:28px 16px}
+}
+
+/* =========================================================
+   ICONS
+   ========================================================= */
+.ico{display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;vertical-align:middle}
+.ico svg{display:block}
+.ico-sm svg{width:14px;height:14px}
+.ico-md svg{width:18px;height:18px}
+.ico-lg svg{width:24px;height:24px}
+.ico-xl svg{width:36px;height:36px}
+.ico-hero svg{width:56px;height:56px}
+.step-icon .ico svg{width:36px;height:36px}
+.search-icon .ico svg{width:16px;height:16px}
+.nav-logo-icon .ico svg{width:20px;height:20px;color:white}
+.auth-logo-icon .ico svg{width:30px;height:30px;color:white}
+.loader-logo .ico svg{width:20px;height:20px}
+.float-card .ico svg{width:16px;height:16px}
+.hero-card .ico svg{width:56px;height:56px}
+.toast-icon .ico svg{width:18px;height:18px}
+.confirm-icon-big .ico svg{width:40px;height:40px}
+.admin-nav-icon .ico svg{width:18px;height:18px}
+.toggle-pw .ico svg{width:17px;height:17px}
+
+</style>
+</head>
+<body>
+
+<!-- ===================== LOADING ===================== -->
+<div id="loading-overlay">
+  <div class="loader-logo"><span class="ico" style="width:20px;height:20px;color:var(--primary);vertical-align:middle;margin-right:6px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/></svg></span>Acompañamiento Terapéutico</div>
+  <div class="loader-spinner"></div>
+</div>
+
+<!-- ===================== TOASTS ===================== -->
+<div id="toast-container"></div>
+
+<!-- ===================== CONFIRM MODAL ===================== -->
+<div class="modal-overlay" id="confirm-modal">
+  <div class="modal modal-sm">
+    <div class="confirm-dlg">
+      <div class="confirm-icon-big" id="ci-icon"><span class="ico" style="width:40px;height:40px;color:var(--warning)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></span></div>
+      <div class="confirm-dlg-title" id="ci-title">¿Estás seguro?</div>
+      <div class="confirm-dlg-desc" id="ci-desc">Esta acción no se puede deshacer.</div>
+      <div class="confirm-actions">
+        <button class="btn btn-ghost" onclick="closeConfirm()">Cancelar</button>
+        <button class="btn btn-danger" id="ci-action" onclick="execConfirm()">Confirmar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== GENERIC MODAL ===================== -->
+<div class="modal-overlay" id="gen-modal">
+  <div class="modal" id="gen-modal-box">
+    <div class="modal-header">
+      <h3 class="modal-title" id="gen-modal-title"></h3>
+      <button class="modal-close" onclick="closeGenModal()">✕</button>
+    </div>
+    <div id="gen-modal-body"></div>
+  </div>
+</div>
+
+<!-- Sidebar overlay mobile -->
+<div class="sidebar-overlay" id="sb-overlay" onclick="closeSidebar()"></div>
+
+<!-- =====================================================================
+     VIEW: LANDING
+     ===================================================================== -->
+<div id="view-landing" class="view active">
+
+  <nav class="navbar">
+    <div class="navbar-inner">
+      <div class="nav-logo" onclick="scrollToSec('hero')">
+        <div class="nav-logo-icon"><span class="ico" style="width:20px;height:20px;color:white"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/></svg></span></div>
+        <div>
+          <div class="nav-logo-text">Acompañamiento</div>
+          <div class="nav-logo-sub">Terapéutico</div>
+        </div>
+      </div>
+      <div class="nav-actions" id="nav-actions"><!-- JS --></div>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero container" id="hero">
+    <div class="hero-grid">
+      <div>
+        <div class="hero-badge"><div class="hero-dot"></div>Espacio seguro y profesional</div>
+        <h1 class="hero-title">Tu bienestar <em>emocional</em> es nuestra prioridad</h1>
+        <p class="hero-desc">Un espacio de escucha, acompañamiento y crecimiento personal donde podrás transitar los momentos difíciles con apoyo profesional y cálido.</p>
+        <div class="hero-cta">
+          <button class="btn btn-primary btn-lg" onclick="heroSchedule()"><span class="ico" style="width:18px;height:18px;color:white"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></span> Agendar consulta</button>
+          <button class="btn btn-ghost btn-lg" onclick="scrollToSec('plans')">Ver planes</button>
+        </div>
+        <div class="hero-stats">
+          <div><div class="stat-val">100%</div><div class="stat-lbl">Confidencial</div></div>
+          <div><div class="stat-val"><span class="ico" style="width:28px;height:28px;color:var(--primary)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 7l-3-3H9L6 7"/><path d="M2 10l2-3h16l2 3"/><path d="M7 10l-5 5 5 5"/><path d="M17 10l5 5-5 5"/><line x1="7" y1="15" x2="17" y2="15"/></svg></span></div><div class="stat-lbl">Profesional</div></div>
+          <div><div class="stat-val"><span class="ico" style="width:28px;height:28px;color:var(--secondary)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></span></div><div class="stat-lbl">Bienestar</div></div>
+        </div>
+      </div>
+      <div class="hero-visual">
+        <div class="hero-card">
+          <div class="hero-card-emoji"><span class="ico" style="width:56px;height:56px;color:var(--secondary)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/></svg></span></div>
+          <div class="hero-card-title">Acompañamiento Terapéutico</div>
+          <div class="hero-card-sub">Tu espacio de escucha y crecimiento</div>
+          <div class="float-card float-1">
+            <div><span class="ico" style="width:16px;height:16px;color:var(--secondary)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></span></div>
+            <div><div class="float-card-name">Consulta confirmada</div><div class="float-card-sub">Código: AT-XK8472</div></div>
+          </div>
+          <div class="float-card float-2">
+            <div><span class="ico" style="width:16px;height:16px;color:var(--primary)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></span></div>
+            <div><div class="float-card-name">Próxima sesión</div><div class="float-card-sub">Lunes 10:00 hs</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- HOW IT WORKS -->
+  <section class="hiw" id="how-it-works">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-label">¿Cómo funciona?</div>
+        <h2 class="section-title">Simple, rápido y confidencial</h2>
+        <p class="section-subtitle">En pocos pasos podés agendar tu consulta y comenzar tu proceso de acompañamiento.</p>
+      </div>
+      <div class="steps-grid">
+        <div class="step-card">
+          <div class="step-icon"><span class="ico" style="width:36px;height:36px;color:var(--primary)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span></div>
+          <div class="step-num">1</div>
+          <h3 class="step-title">Creá tu cuenta</h3>
+          <p class="step-desc">Registrate con un nombre de usuario y contraseña. Tu información es confidencial y solo vos podés ver tus consultas.</p>
+        </div>
+        <div class="step-card">
+          <div class="step-icon"><span class="ico" style="width:36px;height:36px;color:var(--primary)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/></svg></span></div>
+          <div class="step-num">2</div>
+          <h3 class="step-title">Elegí tu plan</h3>
+          <p class="step-desc">Seleccioná el plan de consulta que mejor se adapte a tus necesidades y elegí una fecha y horario disponible.</p>
+        </div>
+        <div class="step-card">
+          <div class="step-icon"><span class="ico" style="width:36px;height:36px;color:var(--primary)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></span></div>
+          <div class="step-num">3</div>
+          <h3 class="step-title">Confirmá por WhatsApp</h3>
+          <p class="step-desc">Recibirás un código único. Envialo por WhatsApp para confirmar tu reserva y coordinar el pago.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PLANS -->
+  <section class="plans-section" id="plans">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-label">Planes disponibles</div>
+        <h2 class="section-title">Encontrá el acompañamiento ideal</h2>
+        <p class="section-subtitle">Cada consulta es un paso hacia tu bienestar. Elegí el plan que mejor se adapte a vos.</p>
+      </div>
+      <div class="plans-grid" id="landing-plans">
+        <div style="text-align:center;padding:40px;grid-column:1/-1;color:var(--text-light)"><div style="margin-bottom:10px;color:var(--text-xlight)"><span class="ico" style="width:32px;height:32px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/></svg></span></div>Cargando planes...</div>
+      </div>
+      <div style="text-align:center;margin-top:36px">
+        <button class="btn btn-primary btn-lg" onclick="heroSchedule()">Agendar mi consulta</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta-sec">
+    <div class="container">
+      <div class="cta-inner">
+        <h2>¿Listo/a para dar el primer paso?</h2>
+        <p>No estás solo/a. Estamos aquí para acompañarte en cada etapa de tu camino.</p>
+        <div style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap">
+          <button class="btn btn-accent btn-lg" onclick="heroSchedule()">Agendar consulta ahora</button>
+          <button class="btn btn-outline btn-lg" style="border-color:rgba(255,255,255,.5);color:white" onclick="showView('auth')">Iniciar sesión</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <div class="footer-brand"><span class="ico" style="width:16px;height:16px;color:var(--primary-light);vertical-align:middle;margin-right:6px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/></svg></span>Acompañamiento Terapéutico</div>
+          <p class="footer-bdesc">Un espacio de escucha, apoyo y acompañamiento profesional para tu bienestar emocional.</p>
+        </div>
+        <div>
+          <div class="footer-h">Navegación</div>
+          <ul class="footer-links">
+            <li><a onclick="scrollToSec('hero')">Inicio</a></li>
+            <li><a onclick="scrollToSec('how-it-works')">¿Cómo funciona?</a></li>
+            <li><a onclick="scrollToSec('plans')">Planes</a></li>
+          </ul>
+        </div>
+        <div>
+          <div class="footer-h">Acceso</div>
+          <ul class="footer-links">
+            <li><a onclick="showAuthTab('register')">Registrarse</a></li>
+            <li><a onclick="showAuthTab('login')">Iniciar sesión</a></li>
+            <li><a onclick="heroSchedule()">Agendar consulta</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">&copy; 2025 Acompañamiento Terapéutico · Todos los derechos reservados</div>
+    </div>
+  </footer>
+</div>
+
+<!-- =====================================================================
+     VIEW: AUTH
+     ===================================================================== -->
+<div id="view-auth" class="view">
+  <div class="auth-wrap">
+    <div class="auth-card">
+      <div class="auth-back" onclick="showView('landing')"><span class="ico" style="width:16px;height:16px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg></span> Volver al inicio</div>
+      <div class="auth-logo-wrap">
+        <div class="auth-logo-icon"><span class="ico" style="width:30px;height:30px;color:white"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/></svg></span></div>
+        <div class="auth-logo-title">Acompañamiento Terapéutico</div>
+      </div>
+
+      <div class="auth-tabs">
+        <button class="auth-tab active" id="tab-login" onclick="showAuthTab('login')">Iniciar sesión</button>
+        <button class="auth-tab" id="tab-register" onclick="showAuthTab('register')">Registrarse</button>
+      </div>
+
+      <!-- Login -->
+      <div class="auth-form active" id="form-login">
+        <div class="form-group">
+          <label class="form-label">Nombre de usuario <span class="req">*</span></label>
+          <input class="form-input" type="text" id="l-user" placeholder="Tu nombre de usuario" autocomplete="username" />
+          <div class="form-error" id="l-user-err"></div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Contraseña <span class="req">*</span></label>
+          <div class="input-wrapper">
+            <input class="form-input" type="password" id="l-pass" placeholder="Tu contraseña" autocomplete="current-password" />
+            <button type="button" class="toggle-pw" onclick="togglePw('l-pass',this)"><span class="ico" style="width:17px;height:17px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></span></button>
+          </div>
+          <div class="form-error" id="l-pass-err"></div>
+        </div>
+        <button class="btn btn-primary btn-full btn-lg" id="login-btn" onclick="doLogin()">Iniciar sesión</button>
+        <div class="auth-switch">¿No tenés cuenta? <a onclick="showAuthTab('register')">Registrate aquí</a></div>
+      </div>
+
+      <!-- Register -->
+      <div class="auth-form" id="form-register">
+        <div class="form-group">
+          <label class="form-label">Nombre de usuario <span class="req">*</span></label>
+          <input class="form-input" type="text" id="r-user" placeholder="Elegí tu nombre de usuario" autocomplete="username" />
+          <div class="form-hint">Solo letras, números y guion bajo. Sin espacios (3-30 caracteres).</div>
+          <div class="form-error" id="r-user-err"></div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Contraseña <span class="req">*</span></label>
+          <div class="input-wrapper">
+            <input class="form-input" type="password" id="r-pass" placeholder="Mínimo 6 caracteres" autocomplete="new-password" />
+            <button type="button" class="toggle-pw" onclick="togglePw('r-pass',this)"><span class="ico" style="width:17px;height:17px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></span></button>
+          </div>
+          <div class="form-error" id="r-pass-err"></div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Confirmar contraseña <span class="req">*</span></label>
+          <div class="input-wrapper">
+            <input class="form-input" type="password" id="r-conf" placeholder="Repetí tu contraseña" autocomplete="new-password" />
+            <button type="button" class="toggle-pw" onclick="togglePw('r-conf',this)"><span class="ico" style="width:17px;height:17px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></span></button>
+          </div>
+          <div class="form-error" id="r-conf-err"></div>
+        </div>
+        <button class="btn btn-primary btn-full btn-lg" id="reg-btn" onclick="doRegister()">Crear cuenta</button>
+        <div class="auth-switch">¿Ya tenés cuenta? <a onclick="showAuthTab('login')">Iniciá sesión</a></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- =====================================================================
+     VIEW: DASHBOARD (user)
+     ===================================================================== -->
+<div id="view-dashboard" class="view">
+  <div style="display:flex;flex-direction:column;min-height:100vh">
+    <header class="app-header">
+      <div class="app-logo">
+        <div class="app-logo-icon"><span class="ico" style="width:20px;height:20px;color:white"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/></svg></span></div>
+        <div><div class="app-logo-title">Acompañamiento Terapéutico</div><div class="app-logo-sub">Mi espacio</div></div>
+      </div>
+      <div class="app-header-r">
+        <div class="nav-user">
+          <div class="avatar" id="dash-avatar"></div>
+        </div>
+        <button class="btn btn-ghost btn-sm" onclick="doLogout()">Salir</button>
+      </div>
+    </header>
+    <main class="app-main">
+      <div class="dash-welcome">
+        <h1 class="dash-title">Hola, <span id="dash-username"></span> </h1>
+        <p class="dash-sub">Aquí podés ver y gestionar tus consultas.</p>
+      </div>
+      <div class="dash-bar">
+        <div class="dash-bar-title">Mis consultas</div>
+        <button class="btn btn-primary" onclick="showView('booking')" style="display:inline-flex;align-items:center;gap:7px"><span class="ico" style="width:16px;height:16px;color:white"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></span> Agendar consulta</button>
+      </div>
+      <div id="user-appts">
+        <div class="empty-state">
+          <div class="empty-icon"><span class="ico" style="width:40px;height:40px;color:var(--text-xlight)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></span></div>
+          <h3 class="empty-title">No tenés consultas agendadas</h3>
+          <p class="empty-desc">Agendá tu primera consulta y comenzá tu proceso de bienestar.</p>
+          <button class="btn btn-primary" onclick="showView('booking')">Agendar mi primera consulta</button>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<!-- =====================================================================
+     VIEW: BOOKING
+     ===================================================================== -->
+<div id="view-booking" class="view">
+  <div style="min-height:100vh;background:var(--bg)">
+    <div class="booking-header">
+      <button class="btn btn-ghost btn-sm" onclick="showView('dashboard')">← Volver</button>
+      <h1 class="booking-title">Agendar consulta</h1>
+    </div>
+
+    <div class="booking-progress">
+      <div class="prog-steps">
+        <div class="prog-step active" id="ps1"><div class="prog-circle">1</div><div class="prog-label">Plan</div></div>
+        <div class="prog-connector" id="pc1"></div>
+        <div class="prog-step" id="ps2"><div class="prog-circle">2</div><div class="prog-label">Datos</div></div>
+        <div class="prog-connector" id="pc2"></div>
+        <div class="prog-step" id="ps3"><div class="prog-circle">3</div><div class="prog-label">Horario</div></div>
+        <div class="prog-connector" id="pc3"></div>
+        <div class="prog-step" id="ps4"><div class="prog-circle">4</div><div class="prog-label">Confirmar</div></div>
+      </div>
+    </div>
+
+    <div class="booking-body">
+      <!-- Step 1: Plan -->
+      <div class="booking-step active" id="bs1">
+        <h2 class="bstep-title">Elegí tu plan</h2>
+        <p class="bstep-desc">Seleccioná el plan de consulta que mejor se adapte a tus necesidades. Esta selección es obligatoria.</p>
+        <div class="bplans-grid" id="book-plans"></div>
+        <div class="form-error" id="b-plan-err" style="font-size:.9rem;margin-bottom:14px"></div>
+        <div class="booking-nav">
+          <button class="btn btn-ghost" onclick="showView('dashboard')">Cancelar</button>
+          <button class="btn btn-primary" onclick="goStep(2)">Siguiente →</button>
+        </div>
+      </div>
+
+      <!-- Step 2: Personal info -->
+      <div class="booking-step" id="bs2">
+        <h2 class="bstep-title">Tus datos personales</h2>
+        <p class="bstep-desc">Completá tus datos para asociar la consulta a tu perfil.</p>
+        <div class="form-group">
+          <label class="form-label">Nombre completo <span class="req">*</span></label>
+          <input class="form-input" type="text" id="b-name" placeholder="Tu nombre y apellido completos" />
+          <div class="form-error" id="b-name-err"></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Teléfono <span class="req">*</span></label>
+            <input class="form-input" type="tel" id="b-phone" placeholder="Ej: +5491123456789" />
+            <div class="form-error" id="b-phone-err"></div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Edad <span class="req">*</span></label>
+            <input class="form-input" type="number" id="b-age" placeholder="Tu edad" min="1" max="120" />
+            <div class="form-error" id="b-age-err"></div>
+          </div>
+        </div>
+        <div class="booking-nav">
+          <button class="btn btn-ghost" onclick="goStep(1)">← Anterior</button>
+          <button class="btn btn-primary" onclick="goStep(3)">Siguiente →</button>
+        </div>
+      </div>
+
+      <!-- Step 3: Slot -->
+      <div class="booking-step" id="bs3">
+        <h2 class="bstep-title">Elegí fecha y horario</h2>
+        <p class="bstep-desc">Seleccioná uno de los horarios disponibles para tu consulta.</p>
+        <div id="book-slots"></div>
+        <div class="form-error" id="b-slot-err" style="margin-top:10px;font-size:.9rem"></div>
+        <div class="booking-nav">
+          <button class="btn btn-ghost" onclick="goStep(2)">← Anterior</button>
+          <button class="btn btn-primary" onclick="goStep(4)">Siguiente →</button>
+        </div>
+      </div>
+
+      <!-- Step 4: Review -->
+      <div class="booking-step" id="bs4">
+        <h2 class="bstep-title">Revisá tu consulta</h2>
+        <p class="bstep-desc">Verificá los datos antes de confirmar. Los comentarios son opcionales.</p>
+        <div class="review-card" id="review-summary"></div>
+        <div class="form-group">
+          <label class="form-label">Comentarios adicionales <span style="color:var(--text-light);font-weight:400">(opcional)</span></label>
+          <textarea class="form-textarea" id="b-comments" placeholder="¿Hay algo que quieras compartir o que debamos saber antes de tu consulta?"></textarea>
+        </div>
+        <div class="notice-banner">
+          <div class="notice-icon"><span class="ico" style="width:18px;height:18px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></span></div>
+          <div class="notice-text"><strong>Importante:</strong> Al confirmar recibirás un código único. Deberás enviarlo por WhatsApp para completar la confirmación y coordinar el pago.</div>
+        </div>
+        <div class="booking-nav">
+          <button class="btn btn-ghost" onclick="goStep(3)">← Anterior</button>
+          <button class="btn btn-secondary btn-lg" id="confirm-book-btn" onclick="confirmBooking()" style="display:inline-flex;align-items:center;gap:8px"><span class="ico" style="width:18px;height:18px;color:white"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></span> Confirmar reserva</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- =====================================================================
+     VIEW: CONFIRMATION
+     ===================================================================== -->
+<div id="view-confirmation" class="view">
+  <div class="conf-wrap">
+    <div class="conf-card">
+      <div class="conf-icon"><span class="ico" style="width:56px;height:56px;color:var(--secondary)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></span></div>
+      <h1 class="conf-title">¡Reserva creada!</h1>
+      <p class="conf-desc">Tu consulta fue registrada exitosamente. Para confirmarla, enviá tu código por WhatsApp y coordiná el pago.</p>
+      <div class="code-box">
+        <div class="code-label">Tu código de reserva</div>
+        <div class="code-value" id="conf-code">AT-000000</div>
+        <div class="code-hint">Guardá este código, lo necesitarás para confirmar</div>
+      </div>
+      <div id="conf-details" style="margin-bottom:22px"></div>
+      <a id="wa-link" class="wa-btn" href="#" target="_blank" rel="noopener">
+        <span style="display:inline-flex;align-items:center;width:20px;height:20px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg></span> Enviar código por WhatsApp
+      </a>
+      <div style="margin-top:14px">
+        <button class="btn btn-ghost btn-full" onclick="showView('dashboard')">Ver mis consultas</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- =====================================================================
+     VIEW: ADMIN
+     ===================================================================== -->
+<div id="view-admin" class="view">
+  <div class="admin-layout">
+
+    <aside class="admin-sidebar" id="admin-sidebar">
+      <div class="admin-sb-head">
+        <div class="admin-sb-logo">
+          <div class="admin-sb-logo-icon"><span class="ico" style="width:20px;height:20px;color:white"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/></svg></span></div>
+          <div class="admin-sb-logo-text">Acomp. Terapéutico</div>
+        </div>
+        <div class="admin-badge">Administración</div>
+      </div>
+      <nav class="admin-nav">
+        <div class="admin-nav-sec">Consultas</div>
+        <div class="admin-nav-item active" data-sv="sv-appointments" onclick="showSV('sv-appointments')">
+          <span class="admin-nav-icon"><span class="ico" style="width:18px;height:18px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/></svg></span></span><span>Todas las consultas</span>
+        </div>
+        <div class="admin-nav-sec">Configuración</div>
+        <div class="admin-nav-item" data-sv="sv-plans" onclick="showSV('sv-plans')">
+          <span class="admin-nav-icon"><span class="ico" style="width:18px;height:18px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg></span></span><span>Planes de consulta</span>
+        </div>
+        <div class="admin-nav-item" data-sv="sv-slots" onclick="showSV('sv-slots')">
+          <span class="admin-nav-icon"><span class="ico" style="width:18px;height:18px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></span></span><span>Horarios disponibles</span>
+        </div>
+        <div class="admin-nav-item" data-sv="sv-settings" onclick="showSV('sv-settings')">
+          <span class="admin-nav-icon"><span class="ico" style="width:18px;height:18px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></span></span><span>Configuración</span>
+        </div>
+      </nav>
+      <div class="admin-sb-foot">
+        <div class="admin-nav-item" onclick="doLogout()">
+          <span class="admin-nav-icon"><span class="ico" style="width:18px;height:18px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg></span></span><span>Cerrar sesión</span>
+        </div>
+      </div>
+    </aside>
+
+    <div class="admin-content">
+      <div class="admin-topbar">
+        <div class="admin-page-title" id="admin-page-title">Todas las consultas</div>
+        <div style="display:flex;align-items:center;gap:14px">
+          <div class="nav-user">
+            <div class="avatar" id="admin-avatar"></div>
+            <span id="admin-uname" style="font-size:.86rem;color:var(--text-medium)"></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="admin-main">
+
+        <!-- Appointments -->
+        <div class="admin-subview active" id="sv-appointments">
+          <div class="stats-grid">
+            <div class="stat-card"><div class="stat-lbl">Total consultas</div><div class="stat-val" id="st-total">—</div></div>
+            <div class="stat-card"><div class="stat-lbl">Pendientes</div><div class="stat-val" id="st-pend">—</div></div>
+            <div class="stat-card"><div class="stat-lbl">Confirmadas</div><div class="stat-val" id="st-conf">—</div></div>
+            <div class="stat-card"><div class="stat-lbl">Sin pagar</div><div class="stat-val" id="st-unpaid">—</div></div>
+          </div>
+          <div class="filters-bar">
+            <div class="search-box">
+              <span class="search-icon"><span class="ico" style="width:16px;height:16px;color:var(--text-light)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></span></span>
+              <input type="text" id="adm-search" placeholder="Buscar por código o nombre..." oninput="filterAppts()" />
+            </div>
+            <button class="filter-btn active" data-f="all" onclick="setFilter('all',this)">Todas</button>
+            <button class="filter-btn" data-f="pending" onclick="setFilter('pending',this)">Pendientes</button>
+            <button class="filter-btn" data-f="confirmed" onclick="setFilter('confirmed',this)">Confirmadas</button>
+            <button class="filter-btn" data-f="cancelled" onclick="setFilter('cancelled',this)">Canceladas</button>
+            <button class="filter-btn" data-f="paid" onclick="setFilter('paid',this)">Pagadas</button>
+            <button class="filter-btn" data-f="unpaid" onclick="setFilter('unpaid',this)">Sin pagar</button>
+          </div>
+          <div id="adm-appts-list">
+            <div style="text-align:center;padding:56px;color:var(--text-light)"><div style="margin-bottom:12px;color:var(--text-xlight)"><span class="ico" style="width:40px;height:40px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></span></div>Cargando consultas...</div>
+          </div>
+        </div>
+
+        <!-- Plans -->
+        <div class="admin-subview" id="sv-plans">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:26px">
+            <div><h2 style="color:var(--text-dark);margin-bottom:3px">Planes de consulta</h2><p style="color:var(--text-medium);font-size:.88rem">Gestioná los planes disponibles para los usuarios.</p></div>
+            <button class="btn btn-primary" onclick="openPlanModal()">+ Nuevo plan</button>
+          </div>
+          <div id="adm-plans-list"><div style="text-align:center;padding:56px;color:var(--text-light)">⏳ Cargando...</div></div>
+        </div>
+
+        <!-- Slots -->
+        <div class="admin-subview" id="sv-slots">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:26px">
+            <div><h2 style="color:var(--text-dark);margin-bottom:3px">Horarios disponibles</h2><p style="color:var(--text-medium);font-size:.88rem">Configurá las fechas y horarios en que los usuarios pueden agendar.</p></div>
+            <button class="btn btn-primary" onclick="openSlotModal()">+ Agregar horario</button>
+          </div>
+          <div id="adm-slots-list"><div style="text-align:center;padding:56px;color:var(--text-light)">⏳ Cargando...</div></div>
+        </div>
+
+        <!-- Settings -->
+        <div class="admin-subview" id="sv-settings">
+          <div style="margin-bottom:26px"><h2 style="color:var(--text-dark);margin-bottom:3px">Configuración</h2><p style="color:var(--text-medium);font-size:.88rem">Ajustes generales de la plataforma.</p></div>
+          <div class="plan-admin-card" style="flex-direction:column;align-items:flex-start;max-width:540px;gap:16px">
+            <div>
+              <h3 style="color:var(--text-dark);margin-bottom:6px;display:flex;align-items:center;gap:8px"><span class="ico" style="width:18px;height:18px;color:var(--primary)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg></span> Número de WhatsApp</h3>
+              <p style="color:var(--text-medium);font-size:.86rem">Este número recibirá los mensajes de confirmación de los usuarios. Incluí el código de país sin el símbolo +.</p>
+            </div>
+            <div class="form-group" style="width:100%;margin:0">
+              <label class="form-label">Número de WhatsApp</label>
+              <input class="form-input" type="text" id="s-wa" placeholder="Ej: 5491123456789" />
+              <div class="form-hint">Formato: código de país + número. Sin espacios ni guiones. Ej: 5491123456789</div>
+            </div>
+            <button class="btn btn-primary" onclick="saveSettings()">Guardar configuración</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <button class="admin-mobile-toggle" id="adm-toggle" onclick="toggleSidebar()"><span class="ico" style="width:20px;height:20px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg></span></button>
+  </div>
+</div>
+
+<!-- =====================================================================
+     FIREBASE
+     ===================================================================== -->
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+
+<script>
+// =====================================================================
+// FIREBASE INIT
+// =====================================================================
+const firebaseConfig = {
+  apiKey: "AIzaSyB1g5isHHLEB2Tkp0JptXroWmOh1QLzUKQ",
+  authDomain: "three-fb0cd.firebaseapp.com",
+  projectId: "three-fb0cd",
+  storageBucket: "three-fb0cd.firebasestorage.app",
+  messagingSenderId: "409880617038",
+  appId: "1:409880617038:web:36666e16881cc4e6c8e31f",
+  measurementId: "G-YC2S7ZRG16"
+};
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const db   = firebase.firestore();
+
+// =====================================================================
+// STATE
+// =====================================================================
+let CU        = null;   // current user (Firebase auth)
+let CUN       = null;   // current username
+let IS_ADMIN  = false;
+let ALL_APPTS = [];
+let CUR_FILTER = 'all';
+let CONFIRM_CB = null;
+let UNSUBS    = [];
+let AUTO_CANCEL_INT = null;
+let RESLOT    = null;   // selected slot for reschedule
+let PLANS_CACHE = [];
+
+const ADMIN_UN = 'FlaviaBuceta';
+
+// =====================================================================
+// ICON SYSTEM
+// =====================================================================
+const ICONS = {
+  leaf:        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/></svg>',
+  calendar:    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>',
+  check:       '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>',
+  x:           '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>',
+  clock:       '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>',
+  card:        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>',
+  clipboard:   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/></svg>',
+  briefcase:   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>',
+  settings:    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>',
+  logout:      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>',
+  search:      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>',
+  eye:         '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>',
+  eyeoff:      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>',
+  warning:     '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>',
+  info:        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>',
+  message:     '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>',
+  user:        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>',
+  phone:       '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>',
+  file:        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>',
+  menu:        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>',
+  pencil:      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>',
+  trash:       '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>',
+  lock:        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>',
+  pause:       '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>',
+  heart:       '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>',
+  handshake:   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 7l-3-3H9L6 7"/><path d="M2 10l2-3h16l2 3"/><path d="M7 10l-5 5 5 5"/><path d="M17 10l5 5-5 5"/><line x1="7" y1="15" x2="17" y2="15"/></svg>',
+  arrowleft:   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>',
+  wa:          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>',
+};
+function ico(name,size=16,cls=''){
+  const s=ICONS[name]; if(!s)return '';
+  return `<span class="ico ${cls}" style="width:${size}px;height:${size}px">${s}</span>`;
+}
+
+
+const EMAIL_SFX = '@at.app';
+
+// Booking state
+const BS = {
+  step:1, plan:null, slot:null,
+  name:'', phone:'', age:0, comments:''
+};
+
+// =====================================================================
+// UTILS
+// =====================================================================
+function genCode() {
+  const L = 'ABCDEFGHJKLMNPQRSTUVWXYZ', N = '23456789';
+  let c = 'AT-';
+  for(let i=0;i<3;i++) c += L[Math.floor(Math.random()*L.length)];
+  for(let i=0;i<3;i++) c += N[Math.floor(Math.random()*N.length)];
+  return c;
+}
+
+function fmtDate(d) {
+  if (!d) return '';
+  const [y,m,day] = d.split('-');
+  const ms = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+  const ds = ['domingo','lunes','martes','miércoles','jueves','viernes','sábado'];
+  const dt = new Date(+y, +m-1, +day);
+  return `${ds[dt.getDay()]} ${+day} de ${ms[+m-1]} de ${y}`;
+}
+
+function fmtTS(ts) {
+  if (!ts) return '—';
+  const d = ts.toDate ? ts.toDate() : new Date(ts);
+  return d.toLocaleDateString('es',{day:'2-digit',month:'2-digit',year:'numeric'}) + ' ' +
+         d.toLocaleTimeString('es',{hour:'2-digit',minute:'2-digit'});
+}
+
+function fmtPrice(p) {
+  if (p === null || p === undefined) return '—';
+  return Number(p).toLocaleString('es');
+}
+
+function isExpired(date, time) {
+  const [y,m,d] = date.split('-').map(Number);
+  const [h,min] = time.split(':').map(Number);
+  return new Date(y, m-1, d, h, min) < new Date();
+}
+
+function toEmail(u) { return u.trim().toLowerCase() + EMAIL_SFX; }
+
+function esc(s) {
+  if (!s && s!==0) return '';
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function initials(n) {
+  if (!n) return '?';
+  return n.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
+}
+
+function sErr(id, msg) { const e=document.getElementById(id); if(e){e.textContent=msg;e.classList.add('show');} }
+function hErr(id) { const e=document.getElementById(id); if(e){e.textContent='';e.classList.remove('show');} }
+function clrErrs(...ids) { ids.forEach(hErr); }
+function setLoad(id, v) { const b=document.getElementById(id); if(!b)return; if(v){b.classList.add('loading');b.disabled=true;}else{b.classList.remove('loading');b.disabled=false;} }
+
+function statusLabel(s) {
+  return {pending:ico('clock',14)+' Pendiente',confirmed:ico('check',14)+' Confirmada',cancelled:ico('x',14)+' Cancelada'}[s]||s;
+}
+
+// =====================================================================
+// TOASTS
+// =====================================================================
+function toast(title, msg, type='info', dur=4200) {
+  const icons = {success:ico('check',18),error:ico('x',18),warning:ico('warning',18),info:ico('info',18)};
+  const c = document.getElementById('toast-container');
+  const t = document.createElement('div');
+  t.className = `toast ${type}`;
+  t.innerHTML = `<div class="toast-icon">${icons[type]||'ℹ️'}</div><div class="toast-body"><div class="toast-title">${esc(title)}</div>${msg?`<div class="toast-msg">${esc(msg)}</div>`:''}</div>`;
+  t.onclick = () => t.remove();
+  c.appendChild(t);
+  setTimeout(() => {
+    t.style.transition='all .3s ease';t.style.opacity='0';t.style.transform='translateX(100%)';
+    setTimeout(()=>t.remove(), 320);
+  }, dur);
+}
+
+// =====================================================================
+// CONFIRM MODAL
+// =====================================================================
+function confirm2(title, desc, cb, icon=null, btnTxt='Confirmar', btnCls='btn-danger') {
+  if(icon===null)icon=ico('warning',40);
+  document.getElementById('ci-title').textContent=title;
+  document.getElementById('ci-desc').textContent=desc;
+  document.getElementById('ci-icon').innerHTML=icon;
+  const b=document.getElementById('ci-action');
+  b.textContent=btnTxt; b.className=`btn ${btnCls}`;
+  CONFIRM_CB=cb;
+  document.getElementById('confirm-modal').classList.add('active');
+}
+function closeConfirm() { document.getElementById('confirm-modal').classList.remove('active'); CONFIRM_CB=null; }
+function execConfirm() { if(CONFIRM_CB) CONFIRM_CB(); closeConfirm(); }
+
+// =====================================================================
+// GENERIC MODAL
+// =====================================================================
+function openModal(title, html, size='') {
+  document.getElementById('gen-modal-title').textContent=title;
+  document.getElementById('gen-modal-body').innerHTML=html;
+  document.getElementById('gen-modal-box').className=`modal ${size}`;
+  document.getElementById('gen-modal').classList.add('active');
+}
+function closeGenModal() { document.getElementById('gen-modal').classList.remove('active'); }
+
+document.querySelectorAll('.modal-overlay').forEach(o=>{
+  o.addEventListener('click', e=>{ if(e.target===o){ o.classList.remove('active'); CONFIRM_CB=null; }});
+});
+
+// =====================================================================
+// VIEW NAVIGATION
+// =====================================================================
+function showView(v) {
+  UNSUBS.forEach(fn=>{ try{fn();}catch(e){} });
+  UNSUBS=[];
+  document.querySelectorAll('.view').forEach(el=>el.classList.remove('active'));
+  const el=document.getElementById('view-'+v);
+  if(el){ el.classList.add('active'); window.scrollTo(0,0); }
+  if(v==='landing') initLanding();
+  if(v==='dashboard') initDashboard();
+  if(v==='admin') initAdmin();
+  if(v==='booking') initBooking();
+}
+
+function showAuthTab(tab) {
+  document.querySelectorAll('.auth-tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.auth-form').forEach(f=>f.classList.remove('active'));
+  document.getElementById('tab-'+tab).classList.add('active');
+  document.getElementById('form-'+tab).classList.add('active');
+  showView('auth');
+}
+
+function scrollToSec(id) {
+  const el=document.getElementById(id);
+  if(el) el.scrollIntoView({behavior:'smooth'});
+}
+
+function heroSchedule() {
+  if(CU) showView('booking');
+  else { showView('auth'); showAuthTab('login'); }
+}
+
+function togglePw(id, btn) {
+  const i=document.getElementById(id);
+  if(!i) return;
+  if(i.type==='password'){ i.type='text'; btn.innerHTML=ico('eyeoff',17); }
+  else { i.type='password'; btn.innerHTML=ico('eye',17); }
+}
+
+// =====================================================================
+// SIDEBAR
+// =====================================================================
+function toggleSidebar() {
+  document.getElementById('admin-sidebar').classList.toggle('open');
+  document.getElementById('sb-overlay').classList.toggle('active');
+}
+function closeSidebar() {
+  document.getElementById('admin-sidebar').classList.remove('open');
+  document.getElementById('sb-overlay').classList.remove('active');
+}
+
+// =====================================================================
+// AUTH
+// =====================================================================
+async function doRegister() {
+  clrErrs('r-user-err','r-pass-err','r-conf-err');
+  const u = document.getElementById('r-user').value.trim();
+  const p = document.getElementById('r-pass').value;
+  const c = document.getElementById('r-conf').value;
+  let ok = true;
+  if (!u) { sErr('r-user-err','El nombre de usuario es obligatorio.'); ok=false; }
+  else if (!/^[a-zA-Z0-9_]{3,30}$/.test(u)) { sErr('r-user-err','Solo letras, números y guion bajo (3-30 caracteres).'); ok=false; }
+  if (!p || p.length<6) { sErr('r-pass-err','La contraseña debe tener al menos 6 caracteres.'); ok=false; }
+  if (p !== c) { sErr('r-conf-err','Las contraseñas no coinciden.'); ok=false; }
+  if (!ok) return;
+  setLoad('reg-btn', true);
+  try {
+    const ex = await db.collection('users').where('username','==',u).limit(1).get();
+    if (!ex.empty) { sErr('r-user-err','Este nombre de usuario ya está en uso.'); setLoad('reg-btn',false); return; }
+    const cred = await auth.createUserWithEmailAndPassword(toEmail(u), p);
+    await db.collection('users').doc(cred.user.uid).set({ username:u, createdAt:firebase.firestore.FieldValue.serverTimestamp() });
+    toast('¡Bienvenido/a!', `Tu cuenta "${u}" fue creada exitosamente.`, 'success');
+  } catch(e) {
+    console.error(e);
+    let m = 'Error al crear la cuenta. Intentá de nuevo.';
+    if (e.code==='auth/email-already-in-use') m='Este nombre de usuario ya está registrado.';
+    toast('Error al registrarse', m, 'error');
+    setLoad('reg-btn', false);
+  }
+}
+
+async function doLogin() {
+  clrErrs('l-user-err','l-pass-err');
+  const u = document.getElementById('l-user').value.trim();
+  const p = document.getElementById('l-pass').value;
+  if (!u) { sErr('l-user-err','Ingresá tu nombre de usuario.'); return; }
+  if (!p) { sErr('l-pass-err','Ingresá tu contraseña.'); return; }
+  setLoad('login-btn', true);
+  try {
+    await auth.signInWithEmailAndPassword(toEmail(u), p);
+  } catch(e) {
+    console.error(e);
+    let m = 'Usuario o contraseña incorrectos.';
+    if (e.code==='auth/user-not-found') m='No existe una cuenta con ese nombre de usuario.';
+    if (e.code==='auth/wrong-password' || e.code==='auth/invalid-credential') m='Contraseña incorrecta.';
+    if (e.code==='auth/too-many-requests') m='Demasiados intentos fallidos. Esperá unos minutos.';
+    toast('Error al iniciar sesión', m, 'error');
+    setLoad('login-btn', false);
+  }
+}
+
+async function doLogout() {
+  if(AUTO_CANCEL_INT){ clearInterval(AUTO_CANCEL_INT); AUTO_CANCEL_INT=null; }
+  try { await auth.signOut(); toast('Sesión cerrada','Hasta pronto.','info'); showView('landing'); }
+  catch(e) { toast('Error','No se pudo cerrar sesión.','error'); }
+}
+
+function updateNavbar() {
+  const el = document.getElementById('nav-actions');
+  if (!el) return;
+  if (CU) {
+    el.innerHTML = `
+      <div class="nav-user"><div class="avatar">${initials(CUN)}</div></div>
+      <button class="btn btn-ghost btn-sm" onclick="${IS_ADMIN?"showView('admin')":"showView('dashboard')"}">Mi panel</button>
+      <button class="btn btn-outline btn-sm" onclick="doLogout()">Salir</button>
+    `;
+  } else {
+    el.innerHTML = `
+      <button class="btn btn-ghost btn-sm" onclick="showAuthTab('login')">Iniciar sesión</button>
+      <button class="btn btn-primary btn-sm" onclick="showAuthTab('register')">Registrarse</button>
+    `;
+  }
+}
+
+function hideLoader() {
+  setTimeout(()=>{ const o=document.getElementById('loading-overlay'); if(o)o.classList.add('hidden'); }, 600);
+}
+
+// =====================================================================
+// AUTH STATE
+// =====================================================================
+auth.onAuthStateChanged(async (user) => {
+  if (user) {
+    CU = user;
+    try {
+      const doc = await db.collection('users').doc(user.uid).get();
+      CUN = doc.exists ? doc.data().username : user.email.replace(EMAIL_SFX,'');
+    } catch(e) { CUN = user.email.replace(EMAIL_SFX,''); }
+    IS_ADMIN = (CUN?.toLowerCase() === ADMIN_UN.toLowerCase());
+    updateNavbar();
+    hideLoader();
+    const av = document.querySelector('.view.active');
+    if (!av || av.id==='view-auth' || av.id==='view-landing') {
+      IS_ADMIN ? showView('admin') : showView('dashboard');
+    }
+    startAutoCancel();
+  } else {
+    CU=null; CUN=null; IS_ADMIN=false;
+    if(AUTO_CANCEL_INT){ clearInterval(AUTO_CANCEL_INT); AUTO_CANCEL_INT=null; }
+    updateNavbar();
+    hideLoader();
+    const av = document.querySelector('.view.active');
+    const prot = ['view-dashboard','view-admin','view-booking','view-confirmation'];
+    if (av && prot.includes(av.id)) showView('landing');
+  }
+});
+
+// =====================================================================
+// LANDING
+// =====================================================================
+function initLanding() {
+  updateNavbar();
+  const unsub = db.collection('plans').where('active','==',true).onSnapshot(snap=>{
+    const plans = snap.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>(a.order||0)-(b.order||0));
+    renderLandingPlans(plans);
+  }, err=>{
+    console.error('[Plans]',err);
+    const g=document.getElementById('landing-plans');
+    if(g) g.innerHTML=`<div class="plans-empty"><div style="font-size:2rem;margin-bottom:10px">${ico('leaf',32)}</div><p>Próximamente disponibles. ¡Volvé pronto!</p></div>`;
+  });
+  UNSUBS.push(unsub);
+}
+
+function renderLandingPlans(plans) {
+  const g = document.getElementById('landing-plans');
+  if (!g) return;
+  if (plans.length===0) {
+    g.innerHTML=`<div class="plans-empty"><div style="margin-bottom:12px;color:var(--text-xlight)"><span class="ico" style="width:40px;height:40px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/></svg></span></div><p>Próximamente disponibles. ¡Volvé pronto!</p></div>`;
+    return;
+  }
+  g.innerHTML = plans.map(p=>`
+    <div class="plan-card">
+      <div class="plan-name">${esc(p.name)}</div>
+      <div class="plan-price"><span class="plan-currency">$</span>${fmtPrice(p.price)}</div>
+      <p class="plan-desc">${esc(p.description)}</p>
+      <button class="btn btn-primary" style="width:100%" onclick="heroSchedule()">Agendar con este plan</button>
+    </div>
+  `).join('');
+}
+
+// =====================================================================
+// DASHBOARD
+// =====================================================================
+function initDashboard() {
+  if (!CU) { showView('auth'); return; }
+  const av = document.getElementById('dash-avatar');
+  if (av) av.textContent = initials(CUN);
+  const un = document.getElementById('dash-username');
+  if (un) un.textContent = CUN;
+
+  const unsub = db.collection('appointments').where('userId','==',CU.uid).onSnapshot(snap=>{
+    const appts = snap.docs.map(d=>({id:d.id,...d.data()}))
+      .sort((a,b)=>{ const ta=a.createdAt?.toMillis?.()||0, tb=b.createdAt?.toMillis?.()||0; return tb-ta; });
+    renderUserAppts(appts);
+  }, err=>console.error(err));
+  UNSUBS.push(unsub);
+}
+
+function renderUserAppts(appts) {
+  const c = document.getElementById('user-appts');
+  if (!c) return;
+  if (appts.length===0) {
+    c.innerHTML=`<div class="empty-state"><div class="empty-icon"><span class="ico" style="width:40px;height:40px;color:var(--text-xlight)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></span></div><h3 class="empty-title">No tenés consultas agendadas</h3><p class="empty-desc">Agendá tu primera consulta y comenzá tu proceso de bienestar.</p><button class="btn btn-primary" onclick="showView('booking')">Agendar mi primera consulta</button></div>`;
+    return;
+  }
+  c.innerHTML = appts.map(a=>`
+    <div class="appt-card">
+      <div class="appt-head">
+        <div class="appt-code">${esc(a.code)}</div>
+        <div class="appt-badges">
+          <span class="badge badge-${a.status}">${statusLabel(a.status)}</span>
+          <span class="badge badge-${a.paymentStatus==='paid'?'paid':'unpaid'}">${a.paymentStatus==='paid'?ico('card',12)+' Pagado':ico('clock',12)+' Pago pendiente'}</span>
+        </div>
+      </div>
+      <div class="appt-plan">${esc(a.planName)}</div>
+      <div class="appt-dt"><span class="ico" style="width:14px;height:14px;color:var(--text-light)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></span> ${fmtDate(a.appointmentDate)} — ${a.appointmentTime} hs</div>
+      <div class="appt-foot">
+        <div class="appt-price">$${fmtPrice(a.planPrice)}</div>
+        <div class="appt-created">Creado el ${a.createdAt?fmtTS(a.createdAt):'—'}</div>
+      </div>
+      ${a.status==='pending'?`
+        <div class="notice-banner">
+          <div class="notice-icon"><span class="ico" style="width:18px;height:18px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></span></div>
+          <div class="notice-text">
+            <strong>Enviá tu código por WhatsApp para confirmar.</strong> Tu consulta está pendiente de confirmación y pago.
+            <br><a class="wa-mini" style="display:inline-flex;align-items:center;gap:4px" onclick="openWA('${esc(a.code)}','${esc(a.planName)}')">>${ico('wa',14)} Enviar por WhatsApp</a>
+          </div>
+        </div>
+      `:''}
+    </div>
+  `).join('');
+}
+
+async function openWA(code, planName) {
+  let wa='';
+  try { const c=await db.collection('config').doc('main').get(); if(c.exists)wa=c.data().whatsappNumber||''; } catch(e){}
+  const msg=`Hola! Mi código de reserva es: *${code}*\nUsuario: ${CUN}\nPlan: ${planName}\n¡Quiero confirmar mi consulta! 🌿`;
+  window.open((wa?`https://wa.me/${wa}`:`https://wa.me/`)+`?text=${encodeURIComponent(msg)}`,'_blank');
+}
+
+// =====================================================================
+// BOOKING
+// =====================================================================
+function initBooking() {
+  if (!CU) { showView('auth'); return; }
+  BS.step=1; BS.plan=null; BS.slot=null; BS.name=''; BS.phone=''; BS.age=0; BS.comments='';
+  goStep(1);
+  loadBookPlans();
+  loadBookSlots();
+}
+
+async function loadBookPlans() {
+  const g = document.getElementById('book-plans');
+  if (!g) return;
+  g.innerHTML=`<div style="text-align:center;padding:40px;grid-column:1/-1;color:var(--text-light)"><div style="font-size:2rem;margin-bottom:10px">⏳</div>Cargando planes...</div>`;
+  try {
+    const snap = await db.collection('plans').where('active','==',true).get();
+    const plans = snap.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>(a.order||0)-(b.order||0));
+    if (plans.length===0) { g.innerHTML=`<div style="text-align:center;padding:40px;grid-column:1/-1;color:var(--text-light)"><div style="margin-bottom:10px;color:var(--text-xlight)"><span class="ico" style="width:32px;height:32px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg></span></div>No hay planes disponibles en este momento.</div>`; return; }
+    g.innerHTML = plans.map(p=>`
+      <div class="bplan-card" id="bp-${p.id}" onclick='selectBPlan(${JSON.stringify({id:p.id,name:p.name,price:p.price,description:p.description})})'>
+        <div class="bplan-check"><span class="ico" style="width:14px;height:14px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span></div>
+        <div class="bplan-name">${esc(p.name)}</div>
+        <div class="bplan-price">$${fmtPrice(p.price)}</div>
+        <div class="bplan-desc">${esc(p.description)}</div>
+      </div>
+    `).join('');
+  } catch(e) { console.error(e); g.innerHTML=`<div style="text-align:center;grid-column:1/-1;color:var(--error);padding:40px">Error al cargar los planes. Recargá la página.</div>`; }
+}
+
+function selectBPlan(plan) {
+  BS.plan = plan;
+  document.querySelectorAll('.bplan-card').forEach(c=>c.classList.remove('selected'));
+  const c=document.getElementById('bp-'+plan.id);
+  if(c)c.classList.add('selected');
+  hErr('b-plan-err');
+}
+
+async function loadBookSlots() {
+  const c=document.getElementById('book-slots');
+  if (!c) return;
+  c.innerHTML=`<div style="text-align:center;padding:40px;color:var(--text-light)"><div style="margin-bottom:10px;color:var(--text-xlight)"><span class="ico" style="width:32px;height:32px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></span></div>Cargando horarios...</div>`;
+  try {
+    const snap = await db.collection('availableSlots').where('available','==',true).get();
+    const slots = snap.docs.map(d=>({id:d.id,...d.data()}))
+      .filter(s=>!isExpired(s.date,s.time))
+      .sort((a,b)=>a.date===b.date?a.time.localeCompare(b.time):a.date.localeCompare(b.date));
+    if (slots.length===0) {
+      c.innerHTML=`<div style="text-align:center;padding:40px;color:var(--text-light)"><div style="margin-bottom:10px;color:var(--text-xlight)"><span class="ico" style="width:32px;height:32px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></span></div>No hay horarios disponibles en este momento. Consultá por WhatsApp.</div>`;
+      return;
+    }
+    const grp={};
+    slots.forEach(s=>{ if(!grp[s.date])grp[s.date]=[]; grp[s.date].push(s); });
+    c.innerHTML = Object.entries(grp).map(([date,ss])=>`
+      <div class="slots-group">
+        <div class="slots-date-lbl">${ico('calendar',14)} ${fmtDate(date)}</div>
+        <div class="slots-row">
+          ${ss.map(s=>`<button class="slot-btn" id="sl-${s.id}" onclick='selectSlot(${JSON.stringify({id:s.id,date:s.date,time:s.time})})'>${s.time} hs</button>`).join('')}
+        </div>
+      </div>
+    `).join('');
+  } catch(e) { console.error(e); c.innerHTML=`<div style="text-align:center;color:var(--error);padding:40px">Error al cargar horarios.</div>`; }
+}
+
+function selectSlot(slot) {
+  BS.slot=slot;
+  document.querySelectorAll('.slot-btn').forEach(b=>b.classList.remove('selected'));
+  const b=document.getElementById('sl-'+slot.id);
+  if(b)b.classList.add('selected');
+  hErr('b-slot-err');
+}
+
+function goStep(step) {
+  if (step > BS.step && !validateStep(BS.step)) return;
+  BS.step=step;
+  document.querySelectorAll('.booking-step').forEach(s=>s.classList.remove('active'));
+  const el=document.getElementById('bs'+step);
+  if(el)el.classList.add('active');
+  for(let i=1;i<=4;i++){
+    const ps=document.getElementById('ps'+i);
+    if(ps){ ps.classList.remove('active','done'); if(i===step)ps.classList.add('active'); if(i<step)ps.classList.add('done'); }
+    if(i<4){ const pc=document.getElementById('pc'+i); if(pc)pc.classList.toggle('done',i<step); }
+  }
+  if(step===4) renderReview();
+}
+
+function validateStep(s) {
+  if(s===1) {
+    if(!BS.plan){ sErr('b-plan-err','Debés seleccionar un plan para continuar.'); return false; }
+  }
+  if(s===2) {
+    const name=document.getElementById('b-name').value.trim();
+    const phone=document.getElementById('b-phone').value.trim();
+    const age=document.getElementById('b-age').value;
+    let ok=true;
+    clrErrs('b-name-err','b-phone-err','b-age-err');
+    if(!name||name.length<3){ sErr('b-name-err','Ingresá tu nombre completo (mínimo 3 caracteres).'); ok=false; }
+    if(!phone||phone.length<6){ sErr('b-phone-err','Ingresá un número de teléfono válido.'); ok=false; }
+    if(!age||+age<1||+age>120){ sErr('b-age-err','Ingresá una edad válida (1-120).'); ok=false; }
+    if(!ok) return false;
+    BS.name=name; BS.phone=phone; BS.age=+age;
+  }
+  if(s===3) {
+    if(!BS.slot){ sErr('b-slot-err','Debés seleccionar un horario para continuar.'); return false; }
+  }
+  return true;
+}
+
+function renderReview() {
+  const c=document.getElementById('review-summary');
+  if (!c) return;
+  c.innerHTML=`
+    <div class="review-row"><div class="review-lbl">Plan seleccionado</div><div class="review-val">${esc(BS.plan?.name||'—')}</div></div>
+    <div class="review-row"><div class="review-lbl">Precio</div><div class="review-val">$${fmtPrice(BS.plan?.price)}</div></div>
+    <div class="review-row"><div class="review-lbl">Nombre completo</div><div class="review-val">${esc(BS.name)}</div></div>
+    <div class="review-row"><div class="review-lbl">Teléfono</div><div class="review-val">${esc(BS.phone)}</div></div>
+    <div class="review-row"><div class="review-lbl">Edad</div><div class="review-val">${BS.age} años</div></div>
+    <div class="review-row"><div class="review-lbl">Fecha y horario</div><div class="review-val">${BS.slot?fmtDate(BS.slot.date)+' — '+BS.slot.time+' hs':'—'}</div></div>
+  `;
+}
+
+async function confirmBooking() {
+  BS.comments = document.getElementById('b-comments')?.value.trim()||'';
+  if(!BS.plan||!BS.slot||!BS.name||!BS.phone||!BS.age){ toast('Datos incompletos','Completá todos los pasos.','error'); return; }
+  const btn=document.getElementById('confirm-book-btn');
+  btn.classList.add('loading'); btn.disabled=true;
+  try {
+    // Generate unique code
+    let code='', tries=0;
+    do { code=genCode(); const ex=await db.collection('appointments').where('code','==',code).limit(1).get(); if(ex.empty)break; tries++; } while(tries<15);
+    // Atomic transaction
+    const slotRef=db.collection('availableSlots').doc(BS.slot.id);
+    const apptRef=db.collection('appointments').doc();
+    await db.runTransaction(async tx=>{
+      const sd=await tx.get(slotRef);
+      if(!sd.exists||!sd.data().available) throw Object.assign(new Error('SLOT_TAKEN'),{code:'SLOT_TAKEN'});
+      const h=[{action:'created',detail:`Reserva creada por usuario ${CUN}`,timestamp:new Date().toISOString()}];
+      tx.set(apptRef,{
+        code, userId:CU.uid, username:CUN,
+        fullName:BS.name, phone:BS.phone, age:BS.age,
+        planId:BS.plan.id, planName:BS.plan.name, planPrice:BS.plan.price, planDescription:BS.plan.description,
+        slotId:BS.slot.id, appointmentDate:BS.slot.date, appointmentTime:BS.slot.time,
+        status:'pending', paymentStatus:'pending',
+        comments:BS.comments, createdAt:firebase.firestore.FieldValue.serverTimestamp(),
+        history:h
+      });
+      tx.update(slotRef,{available:false,bookedBy:CU.uid});
+    });
+    showConfirmation(code);
+  } catch(e) {
+    console.error(e);
+    let m='Ocurrió un error al crear la reserva. Intentá de nuevo.';
+    if(e.code==='SLOT_TAKEN') { m='Este horario ya fue reservado. Por favor, elegí otro.'; loadBookSlots(); BS.slot=null; }
+    toast('Error al confirmar',m,'error');
+  } finally { btn.classList.remove('loading'); btn.disabled=false; }
+}
+
+async function showConfirmation(code) {
+  let wa='';
+  try { const c=await db.collection('config').doc('main').get(); if(c.exists)wa=c.data().whatsappNumber||''; } catch(e){}
+  document.getElementById('conf-code').textContent=code;
+  document.getElementById('conf-details').innerHTML=`
+    <div style="background:var(--bg-warm);border-radius:var(--r-md);padding:14px;text-align:left">
+      <div style="font-size:.8rem;color:var(--text-light);margin-bottom:7px">Resumen de tu consulta</div>
+      <div style="font-weight:700;color:var(--text-dark)">${esc(BS.plan.name)}</div>
+      <div style="font-size:.87rem;color:var(--text-medium)">${fmtDate(BS.slot.date)} — ${BS.slot.time} hs</div>
+      <div style="font-size:1.05rem;font-weight:800;color:var(--primary);margin-top:5px">$${fmtPrice(BS.plan.price)}</div>
+    </div>
+  `;
+  const msg=`Hola! Mi código de reserva es: *${code}*\nNombre: ${BS.name}\nPlan: ${BS.plan.name}\n¡Quiero confirmar mi consulta! 🌿`;
+  document.getElementById('wa-link').href=(wa?`https://wa.me/${wa}`:`https://wa.me/`)+`?text=${encodeURIComponent(msg)}`;
+  showView('confirmation');
+}
+
+// =====================================================================
+// ADMIN INIT
+// =====================================================================
+function initAdmin() {
+  if(!IS_ADMIN){ showView('landing'); return; }
+  const av=document.getElementById('admin-avatar'); if(av)av.textContent=initials(CUN);
+  const un=document.getElementById('admin-uname'); if(un)un.textContent=CUN;
+  showSV('sv-appointments');
+  loadSettings();
+}
+
+function showSV(id) {
+  document.querySelectorAll('.admin-subview').forEach(v=>v.classList.remove('active'));
+  document.querySelectorAll('.admin-nav-item').forEach(n=>n.classList.remove('active'));
+  const sv=document.getElementById(id); if(sv)sv.classList.add('active');
+  const ni=document.querySelector(`[data-sv="${id}"]`); if(ni)ni.classList.add('active');
+  const titles={'sv-appointments':'Todas las consultas','sv-plans':'Planes de consulta','sv-slots':'Horarios disponibles','sv-settings':'Configuración'};
+  const tl=document.getElementById('admin-page-title'); if(tl)tl.textContent=titles[id]||'Panel';
+  closeSidebar();
+  if(id==='sv-appointments') subAppts();
+  if(id==='sv-plans') subPlans();
+  if(id==='sv-slots') subSlots();
+  if(id==='sv-settings') loadSettings();
+}
+
+// =====================================================================
+// ADMIN: APPOINTMENTS
+// =====================================================================
+function subAppts() {
+  const KEY='__appt_u';
+  if(window[KEY]){ try{window[KEY]();}catch(e){} }
+  const u=db.collection('appointments').orderBy('createdAt','desc').onSnapshot(snap=>{
+    ALL_APPTS=snap.docs.map(d=>({id:d.id,...d.data()}));
+    updateStats(); filterAppts();
+  },err=>console.error(err));
+  window[KEY]=u; UNSUBS.push(u);
+}
+
+function updateStats() {
+  const t=ALL_APPTS.length;
+  const pend=ALL_APPTS.filter(a=>a.status==='pending').length;
+  const conf=ALL_APPTS.filter(a=>a.status==='confirmed').length;
+  const unp=ALL_APPTS.filter(a=>a.paymentStatus!=='paid'&&a.status!=='cancelled').length;
+  const s=(id,v)=>{const e=document.getElementById(id);if(e)e.textContent=v;};
+  s('st-total',t); s('st-pend',pend); s('st-conf',conf); s('st-unpaid',unp);
+}
+
+function setFilter(f,btn) {
+  CUR_FILTER=f;
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+  if(btn)btn.classList.add('active');
+  filterAppts();
+}
+
+function filterAppts() {
+  let list=[...ALL_APPTS];
+  if(CUR_FILTER==='pending') list=list.filter(a=>a.status==='pending');
+  else if(CUR_FILTER==='confirmed') list=list.filter(a=>a.status==='confirmed');
+  else if(CUR_FILTER==='cancelled') list=list.filter(a=>a.status==='cancelled');
+  else if(CUR_FILTER==='paid') list=list.filter(a=>a.paymentStatus==='paid');
+  else if(CUR_FILTER==='unpaid') list=list.filter(a=>a.paymentStatus!=='paid'&&a.status!=='cancelled');
+  const term=(document.getElementById('adm-search')?.value||'').trim().toLowerCase();
+  if(term) list=list.filter(a=>(a.code||'').toLowerCase().includes(term)||(a.fullName||'').toLowerCase().includes(term)||(a.username||'').toLowerCase().includes(term)||(a.phone||'').toLowerCase().includes(term));
+  renderAdmAppts(list);
+}
+
+function renderAdmAppts(list) {
+  const c=document.getElementById('adm-appts-list'); if(!c)return;
+  if(list.length===0){ c.innerHTML=`<div style="text-align:center;padding:72px;color:var(--text-light)"><div style="margin-bottom:14px;color:var(--text-xlight)">${ico('clipboard',40)}</div><div style="font-size:1.05rem;font-weight:600;color:var(--text-dark);margin-bottom:7px">Sin resultados</div><p>No se encontraron consultas con los filtros seleccionados.</p></div>`; return; }
+  c.innerHTML=list.map(a=>`
+    <div class="acard" id="ac-${a.id}">
+      <div class="acard-head" onclick="toggleAcard('${a.id}')">
+        <div class="acard-left">
+          <div class="acard-avatar">${initials(a.fullName)}</div>
+          <div>
+            <div class="acard-name">${esc(a.fullName)}</div>
+            <div class="acard-meta"><span class="appt-code">${esc(a.code)}</span> · @${esc(a.username)} · ${fmtDate(a.appointmentDate)} ${a.appointmentTime} hs</div>
+          </div>
+        </div>
+        <div class="acard-right">
+          <span class="badge badge-${a.status}">${statusLabel(a.status)}</span>
+          <span class="badge badge-${a.paymentStatus==='paid'?'paid':'unpaid'}">${a.paymentStatus==='paid'?ico('card',12)+' Pagado':ico('clock',12)+' Sin pagar'}</span>
+          <span style="color:var(--text-light)">▼</span>
+        </div>
+      </div>
+      <div class="acard-body" id="ab-${a.id}">
+        <div class="acard-details">
+          <div><div class="detail-lbl">Plan</div><div class="detail-val">${esc(a.planName)}</div></div>
+          <div><div class="detail-lbl">Precio</div><div class="detail-val">$${fmtPrice(a.planPrice)}</div></div>
+          <div><div class="detail-lbl">Teléfono</div><div class="detail-val">${esc(a.phone)}</div></div>
+          <div><div class="detail-lbl">Edad</div><div class="detail-val">${a.age} años</div></div>
+          <div><div class="detail-lbl">Usuario</div><div class="detail-val">@${esc(a.username)}</div></div>
+          <div><div class="detail-lbl">Creado</div><div class="detail-val">${a.createdAt?fmtTS(a.createdAt):'—'}</div></div>
+        </div>
+        ${a.comments?`<div style="background:var(--bg-warm);border-radius:var(--r-md);padding:13px;margin:6px 0 14px"><div class="detail-lbl" style="margin-bottom:4px">Comentarios</div><div style="font-size:.88rem;color:var(--text-dark)">${esc(a.comments)}</div></div>`:''}
+        ${a.planDescription?`<div style="margin-bottom:14px"><div class="detail-lbl" style="margin-bottom:4px">Descripción del plan al reservar</div><div style="font-size:.86rem;color:var(--text-medium)">${esc(a.planDescription)}</div></div>`:''}
+        <div class="acard-actions">
+          ${a.status!=='confirmed'&&a.status!=='cancelled'?`<button class="btn btn-secondary btn-sm" onclick="admConfirm('${a.id}')">${ico('check',14)} Confirmar</button>`:''}
+          ${a.paymentStatus!=='paid'&&a.status!=='cancelled'?`<button class="btn btn-accent btn-sm" onclick="admPaid('${a.id}')">${ico('card',14)} Marcar pagado</button>`:''}
+          ${a.status!=='cancelled'?`<button class="btn btn-ghost btn-sm" onclick="openReschedule('${a.id}')">${ico('calendar',14)} Reagendar</button><button class="btn btn-danger btn-sm" onclick="admCancel('${a.id}','${esc(a.slotId||'')}')">${ico('x',14)} Cancelar</button>`:''}
+          <button class="btn btn-ghost btn-sm" onclick="showHist('${a.id}')">${ico('file',14)} Historial</button>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function toggleAcard(id) { const b=document.getElementById('ab-'+id); if(b)b.classList.toggle('open'); }
+
+async function admConfirm(id) {
+  confirm2('¿Confirmar consulta?','Se marcará la consulta como confirmada.',async()=>{
+    try {
+      const h={action:'confirmed',detail:`Confirmada por ${CUN}`,timestamp:new Date().toISOString()};
+      await db.collection('appointments').doc(id).update({status:'confirmed',history:firebase.firestore.FieldValue.arrayUnion(h)});
+      toast('Consulta confirmada','','success');
+    } catch(e) { toast('Error','No se pudo confirmar.','error'); }
+  },ico('check',40),'Confirmar','btn-secondary');
+}
+
+async function admPaid(id) {
+  confirm2('¿Marcar como pagada?','Se registrará el pago y se confirmará la consulta.',async()=>{
+    try {
+      const h={action:'paid',detail:`Pago registrado por ${CUN}`,timestamp:new Date().toISOString()};
+      await db.collection('appointments').doc(id).update({paymentStatus:'paid',status:'confirmed',history:firebase.firestore.FieldValue.arrayUnion(h)});
+      toast('Pago registrado','La consulta fue confirmada.','success');
+    } catch(e) { toast('Error','No se pudo actualizar el pago.','error'); }
+  },ico('card',40),'Confirmar pago','btn-accent');
+}
+
+async function admCancel(id, slotId) {
+  confirm2('¿Cancelar consulta?','La consulta se cancelará y el horario quedará disponible.',async()=>{
+    try {
+      const batch=db.batch();
+      const h={action:'cancelled',detail:`Cancelada por administrador ${CUN}`,timestamp:new Date().toISOString()};
+      batch.update(db.collection('appointments').doc(id),{status:'cancelled',history:firebase.firestore.FieldValue.arrayUnion(h)});
+      if(slotId) batch.update(db.collection('availableSlots').doc(slotId),{available:true,bookedBy:null});
+      await batch.commit();
+      toast('Consulta cancelada','El horario quedó disponible.','success');
+    } catch(e) { console.error(e); toast('Error','No se pudo cancelar.','error'); }
+  });
+}
+
+async function openReschedule(id) {
+  const a=ALL_APPTS.find(x=>x.id===id); if(!a)return;
+  RESLOT=null;
+  openModal('Reagendar consulta',`
+    <div style="margin-bottom:14px">
+      <div style="font-weight:700;color:var(--text-dark)">${esc(a.fullName)}</div>
+      <div style="font-size:.86rem;color:var(--text-medium)">Horario actual: ${fmtDate(a.appointmentDate)} — ${a.appointmentTime} hs</div>
+    </div>
+    <div class="detail-lbl" style="margin-bottom:10px">Seleccioná el nuevo horario:</div>
+    <div class="reschedule-slots" id="rs-list"><div style="text-align:center;padding:18px;color:var(--text-light)">⏳ Cargando...</div></div>
+    <div style="margin-top:22px;display:flex;gap:11px;justify-content:flex-end">
+      <button class="btn btn-ghost" onclick="closeGenModal()">Cancelar</button>
+      <button class="btn btn-primary" onclick="execReschedule('${id}','${esc(a.slotId||'')}')">Guardar cambio</button>
+    </div>
+  `,'modal-lg');
+  try {
+    const snap=await db.collection('availableSlots').where('available','==',true).get();
+    const slots=snap.docs.map(d=>({id:d.id,...d.data()})).filter(s=>!isExpired(s.date,s.time)).sort((a,b)=>a.date===b.date?a.time.localeCompare(b.time):a.date.localeCompare(b.date));
+    const rsl=document.getElementById('rs-list'); if(!rsl)return;
+    if(slots.length===0){ rsl.innerHTML='<div style="text-align:center;padding:18px;color:var(--text-light)">No hay horarios disponibles.</div>'; return; }
+    rsl.innerHTML=slots.map(s=>`
+      <div class="rslot-item" id="rs-${s.id}" onclick="selRSlot('${s.id}','${s.date}','${s.time}')">
+        <div><div class="rslot-name">${fmtDate(s.date)}</div><div class="rslot-sub">${s.time} hs</div></div>
+        <div>→</div>
+      </div>`).join('');
+  } catch(e){ const rsl=document.getElementById('rs-list'); if(rsl)rsl.innerHTML='<div style="color:var(--error);padding:18px">Error al cargar horarios.</div>'; }
+}
+
+function selRSlot(id,date,time) {
+  RESLOT={id,date,time};
+  document.querySelectorAll('.rslot-item').forEach(el=>el.classList.remove('selected'));
+  const el=document.getElementById('rs-'+id); if(el)el.classList.add('selected');
+}
+
+async function execReschedule(apptId, oldSlotId) {
+  if(!RESLOT){ toast('Seleccioná un horario','','warning'); return; }
+  try {
+    const batch=db.batch();
+    const h={action:'rescheduled',detail:`Reagendada al ${fmtDate(RESLOT.date)} ${RESLOT.time} hs por ${CUN}`,timestamp:new Date().toISOString()};
+    batch.update(db.collection('appointments').doc(apptId),{slotId:RESLOT.id,appointmentDate:RESLOT.date,appointmentTime:RESLOT.time,history:firebase.firestore.FieldValue.arrayUnion(h)});
+    if(oldSlotId) batch.update(db.collection('availableSlots').doc(oldSlotId),{available:true,bookedBy:null});
+    batch.update(db.collection('availableSlots').doc(RESLOT.id),{available:false,bookedBy:apptId});
+    await batch.commit();
+    closeGenModal(); RESLOT=null;
+    toast('Consulta reagendada','Movida al nuevo horario exitosamente.','success');
+  } catch(e){ console.error(e); toast('Error','No se pudo reagendar.','error'); }
+}
+
+function showHist(id) {
+  const a=ALL_APPTS.find(x=>x.id===id); if(!a)return;
+  const hist=(a.history||[]).slice().reverse();
+  const html=hist.length===0?'<p style="color:var(--text-light);text-align:center;padding:18px">Sin historial registrado.</p>':
+    hist.map(h=>`<div class="hist-item"><div class="hist-dot"></div><div><div class="hist-text">${esc(h.detail||h.action)}</div><div class="hist-time">${h.timestamp?new Date(h.timestamp).toLocaleString('es'):'—'}</div></div></div>`).join('');
+  openModal(`Historial — ${a.code}`,`
+    <div style="margin-bottom:14px"><div style="font-weight:700">${esc(a.fullName)}</div><div style="font-size:.84rem;color:var(--text-medium)">${fmtDate(a.appointmentDate)} — ${a.appointmentTime} hs</div></div>
+    <div>${html}</div>
+  `);
+}
+
+// =====================================================================
+// ADMIN: PLANS
+// =====================================================================
+function subPlans() {
+  const KEY='__plans_u';
+  if(window[KEY]){ try{window[KEY]();}catch(e){} }
+  const u=db.collection('plans').onSnapshot(snap=>{
+    PLANS_CACHE=snap.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>(a.order||0)-(b.order||0));
+    renderAdmPlans(PLANS_CACHE);
+  },err=>console.error(err));
+  window[KEY]=u; UNSUBS.push(u);
+}
+
+function renderAdmPlans(plans) {
+  const c=document.getElementById('adm-plans-list'); if(!c)return;
+  if(plans.length===0){ c.innerHTML=`<div style="text-align:center;padding:56px;color:var(--text-light)"><div style="margin-bottom:14px;color:var(--text-xlight)">${ico('briefcase',40)}</div><div style="font-weight:600;color:var(--text-dark);margin-bottom:7px">Sin planes creados</div><p>Creá el primer plan para que aparezca en la página principal.</p></div>`; return; }
+  c.innerHTML=plans.map((p,i)=>`
+    <div class="plan-admin-card">
+      <div class="plan-order-btns">
+        <button class="order-btn" onclick="movePlan('${p.id}','up')" ${i===0?'disabled':''}>▲</button>
+        <button class="order-btn" onclick="movePlan('${p.id}','down')" ${i===plans.length-1?'disabled':''}>▼</button>
+      </div>
+      <div class="plan-admin-info">
+        <div class="plan-admin-name">${esc(p.name)}</div>
+        <div class="plan-admin-price">$${fmtPrice(p.price)}</div>
+        <div class="plan-admin-desc">${esc(p.description)}</div>
+      </div>
+      <div class="plan-admin-actions">
+        <span class="badge badge-${p.active?'active':'inactive'}">${p.active?ico('check',12)+' Activo':ico('pause',12)+' Inactivo'}</span>
+        <label class="toggle-sw" title="${p.active?'Desactivar':'Activar'}">
+          <input type="checkbox" ${p.active?'checked':''} onchange="togglePlanActive('${p.id}',this.checked)">
+          <span class="slider"></span>
+        </label>
+        <button class="btn btn-ghost btn-sm" onclick="openPlanModal('${p.id}')">${ico('pencil',14)}</button>
+        <button class="btn btn-danger btn-sm" onclick="delPlan('${p.id}','${esc(p.name)}')">${ico('trash',14)}</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+async function togglePlanActive(id, active) {
+  try { await db.collection('plans').doc(id).update({active,updatedAt:firebase.firestore.FieldValue.serverTimestamp()}); toast(active?'Plan activado':'Plan desactivado','','success'); }
+  catch(e){ toast('Error','No se pudo cambiar el estado.','error'); }
+}
+
+async function movePlan(id, dir) {
+  try {
+    const plans=PLANS_CACHE;
+    const idx=plans.findIndex(p=>p.id===id); if(idx===-1)return;
+    const si=dir==='up'?idx-1:idx+1;
+    if(si<0||si>=plans.length)return;
+    const batch=db.batch();
+    batch.update(db.collection('plans').doc(plans[idx].id),{order:si});
+    batch.update(db.collection('plans').doc(plans[si].id),{order:idx});
+    await batch.commit();
+  } catch(e){ toast('Error','No se pudo reordenar.','error'); }
+}
+
+function openPlanModal(id=null) {
+  const p=id?PLANS_CACHE.find(x=>x.id===id):null;
+  openModal(id?'Editar plan':'Nuevo plan',`
+    <div class="form-group">
+      <label class="form-label">Nombre del plan <span class="req">*</span></label>
+      <input class="form-input" type="text" id="pm-name" placeholder="Ej: Sesión individual" value="${esc(p?.name||'')}" />
+      <div class="form-error" id="pm-name-err"></div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Precio <span class="req">*</span></label>
+      <input class="form-input" type="number" id="pm-price" placeholder="0" min="0" step="0.01" value="${p?.price??''}" />
+      <div class="form-error" id="pm-price-err"></div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Descripción <span class="req">*</span></label>
+      <textarea class="form-textarea" id="pm-desc" placeholder="Describí qué incluye este plan...">${esc(p?.description||'')}</textarea>
+      <div class="form-error" id="pm-desc-err"></div>
+    </div>
+    <div class="form-group">
+      <div style="display:flex;align-items:center;gap:11px">
+        <label class="toggle-sw"><input type="checkbox" id="pm-active" ${p===null||p?.active!==false?'checked':''}><span class="slider"></span></label>
+        <label class="form-label" style="margin:0;cursor:pointer">Plan activo (visible en la página)</label>
+      </div>
+    </div>
+    <div style="display:flex;gap:11px;justify-content:flex-end;margin-top:18px">
+      <button class="btn btn-ghost" onclick="closeGenModal()">Cancelar</button>
+      <button class="btn btn-primary" onclick="savePlan('${id||''}')">${ico('check',14)} ${id?'Guardar cambios':'Crear plan'}</button>
+    </div>
+  `);
+}
+
+async function savePlan(id) {
+  const name=document.getElementById('pm-name')?.value.trim();
+  const price=document.getElementById('pm-price')?.value;
+  const desc=document.getElementById('pm-desc')?.value.trim();
+  const active=document.getElementById('pm-active')?.checked;
+  let ok=true;
+  if(!name){ sErr('pm-name-err','El nombre es obligatorio.'); ok=false; }
+  if(price===''||price===null||price===undefined){ sErr('pm-price-err','El precio es obligatorio.'); ok=false; }
+  if(!desc){ sErr('pm-desc-err','La descripción es obligatoria.'); ok=false; }
+  if(!ok)return;
+  try {
+    const data={name,price:parseFloat(price),description:desc,active:active!==false,updatedAt:firebase.firestore.FieldValue.serverTimestamp()};
+    if(id) { await db.collection('plans').doc(id).update(data); toast('Plan actualizado','Los cambios son visibles para todos.','success'); }
+    else {
+      const snap=await db.collection('plans').orderBy('order','desc').limit(1).get();
+      const maxOrd=snap.empty?0:(snap.docs[0].data().order||0)+1;
+      await db.collection('plans').add({...data,order:maxOrd,createdAt:firebase.firestore.FieldValue.serverTimestamp()});
+      toast('Plan creado','Ya está disponible en la plataforma.','success');
+    }
+    closeGenModal();
+  } catch(e){ console.error(e); toast('Error','No se pudo guardar el plan.','error'); }
+}
+
+async function delPlan(id, name) {
+  confirm2(`¿Eliminar el plan "${name}"?`,'Esta acción es permanente.',async()=>{
+    try{ await db.collection('plans').doc(id).delete(); toast('Plan eliminado','','success'); }
+    catch(e){ toast('Error','No se pudo eliminar.','error'); }
+  });
+}
+
+// =====================================================================
+// ADMIN: SLOTS
+// =====================================================================
+function subSlots() {
+  const KEY='__slots_u';
+  if(window[KEY]){ try{window[KEY]();}catch(e){} }
+  const u=db.collection('availableSlots').onSnapshot(snap=>{
+    const slots=snap.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>a.date===b.date?a.time.localeCompare(b.time):a.date.localeCompare(b.date));
+    renderAdmSlots(slots);
+  },err=>console.error(err));
+  window[KEY]=u; UNSUBS.push(u);
+}
+
+function renderAdmSlots(slots) {
+  const c=document.getElementById('adm-slots-list'); if(!c)return;
+  if(slots.length===0){ c.innerHTML=`<div style="text-align:center;padding:56px;color:var(--text-light)"><div style="margin-bottom:14px;color:var(--text-xlight)">${ico('calendar',40)}</div><div style="font-weight:600;color:var(--text-dark);margin-bottom:7px">Sin horarios configurados</div><p>Agregá fechas y horarios para que los usuarios puedan agendar.</p></div>`; return; }
+  const now=new Date();
+  c.innerHTML=slots.map(s=>{
+    const exp=isExpired(s.date,s.time);
+    return `<div class="slot-item" style="${exp?'opacity:.5':''}">
+      <div class="slot-info">
+        <div class="slot-date">${fmtDate(s.date)}</div>
+        <div class="slot-time">${s.time} hs</div>
+        <span class="badge badge-${s.available?'active':'inactive'}">${s.available?ico('check',12)+' Disponible':ico('lock',12)+' Reservado'}</span>
+        ${exp?'<span class="badge badge-inactive">'+ico('clock',12)+' Pasado</span>':''}
+      </div>
+      <div class="slot-actions">
+        <button class="btn btn-ghost btn-sm" onclick="openSlotModal('${s.id}','${s.date}','${s.time}')">${ico('pencil',14)}</button>
+        <button class="btn btn-danger btn-sm" onclick="delSlot('${s.id}','${s.date}','${s.time}')">${ico('trash',14)}</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function openSlotModal(id=null, date='', time='') {
+  const today=new Date().toISOString().split('T')[0];
+  openModal(id?'Editar horario':'Agregar horario',`
+    <div class="form-group">
+      <label class="form-label">Fecha <span class="req">*</span></label>
+      <input class="form-input" type="date" id="sm-date" min="${today}" value="${date}" />
+      <div class="form-error" id="sm-date-err"></div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Hora <span class="req">*</span></label>
+      <input class="form-input" type="time" id="sm-time" value="${time}" />
+      <div class="form-error" id="sm-time-err"></div>
+    </div>
+    <div style="display:flex;gap:11px;justify-content:flex-end;margin-top:18px">
+      <button class="btn btn-ghost" onclick="closeGenModal()">Cancelar</button>
+      <button class="btn btn-primary" onclick="saveSlot('${id||''}')">${ico('check',14)} ${id?'Guardar':'Agregar horario'}</button>
+    </div>
+  `);
+}
+
+async function saveSlot(id) {
+  const date=document.getElementById('sm-date')?.value;
+  const time=document.getElementById('sm-time')?.value;
+  let ok=true;
+  if(!date){ sErr('sm-date-err','Seleccioná una fecha.'); ok=false; }
+  if(!time){ sErr('sm-time-err','Ingresá un horario.'); ok=false; }
+  if(!ok)return;
+  try {
+    if(id){ await db.collection('availableSlots').doc(id).update({date,time}); toast('Horario actualizado','','success'); }
+    else {
+      const dup=await db.collection('availableSlots').where('date','==',date).where('time','==',time).limit(1).get();
+      if(!dup.empty){ toast('Horario duplicado','Ya existe ese horario en esa fecha.','warning'); return; }
+      await db.collection('availableSlots').add({date,time,available:true,bookedBy:null,createdAt:firebase.firestore.FieldValue.serverTimestamp()});
+      toast('Horario agregado','','success');
+    }
+    closeGenModal();
+  } catch(e){ console.error(e); toast('Error','No se pudo guardar el horario.','error'); }
+}
+
+async function delSlot(id, date, time) {
+  confirm2('¿Eliminar horario?',`Se eliminará el horario del ${fmtDate(date)} a las ${time} hs.`,async()=>{
+    try{ await db.collection('availableSlots').doc(id).delete(); toast('Horario eliminado','','success'); }
+    catch(e){ toast('Error','No se pudo eliminar.','error'); }
+  });
+}
+
+// =====================================================================
+// ADMIN: SETTINGS
+// =====================================================================
+async function loadSettings() {
+  try {
+    const c=await db.collection('config').doc('main').get();
+    if(c.exists){ const el=document.getElementById('s-wa'); if(el)el.value=c.data().whatsappNumber||''; }
+  } catch(e){ console.error(e); }
+}
+
+async function saveSettings() {
+  const wa=document.getElementById('s-wa')?.value.trim()||'';
+  try {
+    await db.collection('config').doc('main').set({whatsappNumber:wa},{merge:true});
+    toast('Configuración guardada','Número de WhatsApp actualizado.','success');
+  } catch(e){ toast('Error','No se pudo guardar.','error'); }
+}
+
+// =====================================================================
+// AUTO-CANCEL
+// =====================================================================
+function startAutoCancel() {
+  if(AUTO_CANCEL_INT) clearInterval(AUTO_CANCEL_INT);
+  checkAndCancel();
+  AUTO_CANCEL_INT=setInterval(checkAndCancel, 60*1000);
+}
+
+async function checkAndCancel() {
+  try {
+    const snap=await db.collection('appointments').where('status','==','pending').where('paymentStatus','==','pending').get();
+    const expired=snap.docs.filter(d=>{ const x=d.data(); return isExpired(x.appointmentDate,x.appointmentTime); });
+    if(expired.length===0)return;
+    const batch=db.batch();
+    expired.forEach(d=>{
+      const x=d.data();
+      const h={action:'auto_cancelled',detail:`Cancelada automáticamente: fecha pasada sin pago confirmado (${new Date().toLocaleString('es')})`,timestamp:new Date().toISOString()};
+      batch.update(db.collection('appointments').doc(d.id),{status:'cancelled',history:firebase.firestore.FieldValue.arrayUnion(h)});
+      if(x.slotId) batch.update(db.collection('availableSlots').doc(x.slotId),{available:true,bookedBy:null});
+    });
+    await batch.commit();
+    console.log(`[AutoCancel] ${expired.length} consulta(s) canceladas automáticamente.`);
+  } catch(e){ console.error('[AutoCancel]',e); }
+}
+
+// =====================================================================
+// INIT
+// =====================================================================
+initLanding();
+</script>
+</body>
+</html>
